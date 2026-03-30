@@ -7,24 +7,24 @@
 <style>
 /* ========== CSS DESIGN SYSTEM ========== */
 :root {
-  --color-primary: #1e3a5f;
-  --color-primary-dark: #0d1f3c;
-  --color-primary-light: #3b6fa0;
-  --color-accent: #10b981;
-  --color-accent-dark: #059669;
-  --color-warning: #f59e0b;
+  --color-primary: #2563eb;
+  --color-primary-dark: #1e40af;
+  --color-primary-light: #3b82f6;
+  --color-accent: #22c55e;
+  --color-accent-dark: #16a34a;
+  --color-warning: #f97316;
   --color-error: #ef4444;
-  --color-info: #06b6d4;
+  --color-info: #0ea5e9;
   --color-tier1: #ef4444;
-  --color-tier2: #f59e0b;
+  --color-tier2: #f97316;
   --color-tier3: #3b82f6;
-  --color-bg: #f4f6f9;
+  --color-bg: #f8fafc;
   --color-surface: #ffffff;
-  --color-surface-alt: #f8fafc;
+  --color-surface-alt: #f1f5f9;
   --color-border: #e2e8f0;
   --color-border-light: #f1f5f9;
   --color-text: #0f172a;
-  --color-text-secondary: #64748b;
+  --color-text-secondary: #6b7280;
   --color-text-inverse: #ffffff;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   --font-mono: 'JetBrains Mono', 'SF Mono', 'Consolas', 'Liberation Mono', monospace;
@@ -65,13 +65,13 @@ body {
 .top-header span { opacity: 0.7; }
 
 .main-header {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
   color: var(--color-text-inverse);
   padding: 14px 32px;
   display: flex;
   align-items: center;
   gap: 16px;
-  box-shadow: 0 4px 20px rgba(13,31,60,0.25);
+  box-shadow: 0 4px 20px rgba(30,64,175,0.3);
   position: relative;
   z-index: 100;
 }
@@ -216,10 +216,10 @@ body {
   top: 0; left: 0;
   width: 100%; height: 3px;
 }
-.stat-card.tier1::before { background: linear-gradient(90deg, var(--color-tier1), #f87171); }
-.stat-card.tier2::before { background: linear-gradient(90deg, var(--color-tier2), #fbbf24); }
-.stat-card.tier3::before { background: linear-gradient(90deg, var(--color-tier3), #60a5fa); }
-.stat-card.accent::before { background: linear-gradient(90deg, var(--color-accent), #34d399); }
+.stat-card.tier1::before { background: linear-gradient(90deg, #ef4444, #f87171); }
+.stat-card.tier2::before { background: linear-gradient(90deg, #f97316, #fb923c); }
+.stat-card.tier3::before { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+.stat-card.accent::before { background: linear-gradient(90deg, #22c55e, #4ade80); }
 .stat-label {
   font-size: 11px;
   text-transform: uppercase;
@@ -314,9 +314,9 @@ body {
   background: var(--color-primary);
   color: white;
   border-color: var(--color-primary);
-  box-shadow: 0 1px 3px rgba(30,58,95,0.3);
+  box-shadow: 0 1px 3px rgba(37,99,235,0.3);
 }
-.btn-primary:hover { background: var(--color-primary-light); box-shadow: 0 3px 8px rgba(30,58,95,0.3); }
+.btn-primary:hover { background: var(--color-primary-light); box-shadow: 0 3px 8px rgba(37,99,235,0.35); }
 .btn-secondary {
   background: white;
   color: var(--color-primary);
@@ -362,11 +362,11 @@ body {
   overflow-y: auto;
   font-family: var(--font-mono);
   font-size: 11.5px;
-  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-  color: #cbd5e1;
+  background: linear-gradient(180deg, #111827 0%, #1f2937 100%);
+  color: #d1d5db;
   border-radius: var(--radius-md);
   padding: 14px;
-  border: 1px solid #334155;
+  border: 1px solid #374151;
 }
 .event-feed-item {
   padding: 5px 0;
@@ -440,12 +440,12 @@ body {
 .offer-rank {
   width: 34px; height: 34px;
   border-radius: 10px;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
+  background: linear-gradient(135deg, #1e40af, #3b82f6);
   color: white;
   display: flex; align-items: center; justify-content: center;
   font-weight: 700; font-size: 13px;
   flex-shrink: 0;
-  box-shadow: 0 2px 4px rgba(30,58,95,0.2);
+  box-shadow: 0 2px 4px rgba(37,99,235,0.25);
 }
 
 /* ========== TIMER ========== */
@@ -619,7 +619,7 @@ body {
   transition: all var(--transition-fast);
   background: var(--color-surface);
 }
-.search-input:focus { border-color: var(--color-primary-light); box-shadow: 0 0 0 3px rgba(59,111,160,0.12); }
+.search-input:focus { border-color: var(--color-primary-light); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
 
 /* ========== TOOLTIP ========== */
 .tooltip-container { position: relative; }
@@ -653,26 +653,35 @@ body {
   cursor: pointer;
   transition: all var(--transition-fast);
 }
-.select-input:focus { border-color: var(--color-primary-light); box-shadow: 0 0 0 3px rgba(59,111,160,0.12); }
+.select-input:focus { border-color: var(--color-primary-light); box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
 
 /* ========== DEMO MODE OVERLAY ========== */
 .demo-overlay {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(15,23,42,0.4);
+  background: rgba(15,23,42,0.18);
   z-index: 9998;
-  backdrop-filter: blur(2px);
   transition: opacity 0.3s ease;
 }
 .demo-overlay.active { display: block; }
+.demo-overlay.has-spotlight { background: transparent; }
 .demo-spotlight {
-  position: absolute;
+  position: fixed;
   border-radius: var(--radius-md);
-  box-shadow: 0 0 0 9999px rgba(15,23,42,0.45);
+  box-shadow: 0 0 0 9999px rgba(15,23,42,0.22);
+  border: 2px solid rgba(37,99,235,0.5);
   z-index: 9999;
-  transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
+  transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
   pointer-events: none;
+}
+.demo-spotlight-glow {
+  position: fixed;
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 20px rgba(37,99,235,0.2), 0 0 40px rgba(37,99,235,0.08);
+  z-index: 9998;
+  pointer-events: none;
+  transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
 }
 .demo-panel {
   display: none;
@@ -1126,124 +1135,116 @@ body {
         <span class="badge badge-tier2">Tier 2</span>
       </div>
       <div class="map-container">
-        <svg viewBox="0 0 960 600" id="transportMap" style="background:linear-gradient(180deg,#eef3fa 0%,#dce6f2 100%);border-radius:var(--radius-md);">
+        <svg viewBox="0 0 960 600" id="transportMap" style="background:linear-gradient(180deg,#f0f5fa 0%,#e4ecf4 100%);border-radius:var(--radius-md);">
           <defs>
             <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker>
+            <filter id="pinShadow"><feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#1e40af" flood-opacity="0.35"/></filter>
           </defs>
-          <!-- US States (simplified polygons for key states) -->
-          <g id="statesGroup" fill="#d5dfe9" stroke="#b8c7d6" stroke-width="0.8" stroke-linejoin="round">
-            <!-- Washington --> <path d="M108,48 L120,45 L158,50 L175,48 L178,55 L180,75 L170,80 L155,82 L120,80 L108,75Z"/>
-            <!-- Oregon --> <path d="M108,75 L120,80 L155,82 L170,80 L180,75 L185,95 L178,115 L165,120 L140,118 L115,110 L105,95Z"/>
-            <!-- California --> <path d="M105,95 L115,110 L140,118 L165,120 L178,115 L175,140 L168,165 L158,195 L145,225 L130,250 L115,260 L108,240 L100,210 L98,180 L100,150 L102,120Z"/>
-            <!-- Nevada --> <path d="M165,120 L178,115 L185,95 L200,100 L210,130 L205,165 L195,200 L175,195 L168,165 L165,140Z"/>
-            <!-- Idaho --> <path d="M180,75 L200,78 L210,85 L215,100 L210,130 L200,100 L185,95Z"/>
-            <!-- Montana --> <path d="M200,48 L270,42 L330,40 L335,50 L330,72 L310,78 L280,80 L240,78 L215,80 L210,70 L200,65Z"/>
-            <!-- Wyoming --> <path d="M240,78 L280,80 L310,78 L330,72 L340,82 L342,110 L305,112 L270,110 L245,108 L240,95Z"/>
-            <!-- Utah --> <path d="M210,130 L245,108 L270,110 L275,140 L268,170 L250,175 L230,172 L215,165 L210,145Z"/>
-            <!-- Colorado --> <path d="M270,110 L305,112 L342,110 L365,112 L370,148 L335,150 L300,148 L275,145 L275,140Z"/>
-            <!-- Arizona --> <path d="M150,225 L168,195 L195,200 L215,202 L225,230 L220,260 L200,275 L175,270 L155,255 L148,240Z"/>
-            <!-- New Mexico --> <path d="M225,230 L250,210 L268,200 L290,198 L315,195 L320,230 L318,265 L300,268 L265,270 L240,268 L230,260Z"/>
-            <!-- North Dakota --> <path d="M335,50 L395,48 L440,45 L442,72 L435,78 L395,80 L355,78 L340,76Z"/>
-            <!-- South Dakota --> <path d="M340,76 L355,78 L395,80 L435,78 L442,72 L448,95 L445,110 L415,112 L375,110 L350,108 L342,95Z"/>
-            <!-- Nebraska --> <path d="M350,108 L375,110 L415,112 L445,110 L460,115 L470,135 L445,140 L410,142 L375,140 L350,138 L345,125Z"/>
-            <!-- Kansas --> <path d="M365,138 L410,142 L445,140 L470,135 L478,155 L475,175 L442,178 L405,175 L375,172 L370,155Z"/>
-            <!-- Oklahoma --> <path d="M368,178 L405,175 L442,178 L475,175 L478,195 L475,210 L450,212 L430,218 L390,215 L370,212 L365,195Z"/>
-            <!-- Texas --> <path d="M315,195 L365,195 L370,212 L390,215 L430,218 L450,212 L475,210 L485,230 L490,260 L480,295 L465,325 L440,350 L415,368 L390,375 L370,365 L355,340 L340,315 L330,290 L320,265 L318,240Z"/>
-            <!-- Minnesota --> <path d="M448,45 L500,42 L530,40 L535,55 L540,80 L535,95 L520,100 L500,102 L480,100 L460,95 L452,80Z"/>
-            <!-- Iowa --> <path d="M460,100 L500,102 L530,100 L548,105 L555,125 L545,140 L520,142 L490,140 L470,138 L465,120Z"/>
-            <!-- Missouri --> <path d="M478,148 L520,145 L545,142 L560,148 L570,170 L565,195 L548,200 L525,198 L502,195 L488,192 L480,175Z"/>
-            <!-- Arkansas --> <path d="M488,200 L525,198 L548,200 L558,210 L560,238 L545,242 L520,240 L498,238 L490,225Z"/>
-            <!-- Louisiana --> <path d="M490,245 L520,242 L545,245 L560,242 L570,260 L575,285 L565,300 L545,310 L520,308 L500,300 L490,280 L488,260Z"/>
-            <!-- Wisconsin --> <path d="M530,48 L560,45 L585,50 L595,65 L600,85 L595,100 L580,105 L555,102 L540,98 L535,80 L530,60Z"/>
-            <!-- Michigan --> <path d="M595,48 L630,45 L650,50 L660,65 L665,85 L655,100 L640,102 L625,100 L610,95 L602,80 L595,65Z"/>
-            <!-- Illinois --> <path d="M555,105 L580,105 L595,108 L600,130 L605,155 L600,180 L590,195 L575,200 L560,198 L555,175 L550,148 L548,125Z"/>
-            <!-- Indiana --> <path d="M600,108 L625,105 L635,110 L640,135 L638,165 L632,190 L620,195 L605,192 L598,170 L596,140Z"/>
-            <!-- Ohio --> <path d="M635,100 L660,95 L685,98 L700,105 L705,130 L700,160 L690,180 L670,185 L650,182 L640,170 L638,145 L636,120Z"/>
-            <!-- Kentucky --> <path d="M590,195 L620,192 L650,188 L680,185 L700,190 L720,195 L715,212 L700,220 L675,218 L645,215 L615,212 L595,210Z"/>
-            <!-- Tennessee --> <path d="M590,215 L625,212 L660,218 L700,220 L730,222 L740,235 L728,242 L700,240 L660,238 L620,236 L590,235Z"/>
-            <!-- Mississippi --> <path d="M560,242 L590,238 L600,260 L605,285 L600,310 L585,318 L570,315 L565,295Z"/>
-            <!-- Alabama --> <path d="M595,238 L625,236 L640,240 L648,265 L645,295 L635,315 L618,318 L605,310 L600,285 L595,260Z"/>
-            <!-- Georgia --> <path d="M640,238 L670,235 L695,238 L710,250 L715,278 L708,308 L695,320 L675,318 L655,310 L648,290 L645,265Z"/>
-            <!-- Florida --> <path d="M650,320 L680,318 L700,320 L718,315 L735,325 L750,350 L755,380 L748,405 L730,420 L710,425 L695,415 L688,395 L685,370 L678,348 L665,335Z"/>
-            <!-- South Carolina --> <path d="M700,238 L725,232 L745,238 L755,258 L748,275 L730,280 L710,278 L700,265Z"/>
-            <!-- North Carolina --> <path d="M690,215 L720,210 L750,208 L780,215 L800,225 L795,240 L775,245 L750,240 L725,235 L700,238Z"/>
-            <!-- Virginia --> <path d="M695,190 L725,185 L760,188 L790,195 L810,205 L800,218 L780,215 L755,210 L725,210 L700,212Z"/>
-            <!-- West Virginia --> <path d="M700,170 L720,168 L735,175 L730,190 L720,198 L705,195 L695,185 L698,175Z"/>
-            <!-- Pennsylvania --> <path d="M705,118 L740,112 L775,108 L800,112 L805,130 L798,148 L780,152 L750,150 L720,148 L708,140Z"/>
-            <!-- New York --> <path d="M740,78 L775,72 L810,70 L835,80 L845,95 L838,115 L820,120 L800,112 L775,108 L745,110 L738,95Z"/>
-            <!-- Vermont --> <path d="M815,58 L825,55 L832,65 L835,80 L828,85 L818,80Z"/>
-            <!-- New Hampshire --> <path d="M828,50 L838,48 L842,60 L840,72 L835,78 L828,70 L825,58Z"/>
-            <!-- Maine --> <path d="M838,25 L855,22 L868,30 L872,48 L865,62 L855,68 L845,60 L840,45Z"/>
-            <!-- Massachusetts --> <path d="M838,92 L860,88 L878,90 L880,98 L868,102 L848,100 L838,98Z"/>
-            <!-- Connecticut --> <path d="M838,102 L855,100 L862,105 L858,112 L845,115 L838,110Z"/>
-            <!-- Rhode Island --> <path d="M862,95 L872,94 L874,102 L868,106 L862,102Z"/>
-            <!-- New Jersey --> <path d="M802,125 L815,120 L822,130 L820,148 L812,158 L802,152 L800,138Z"/>
-            <!-- Delaware --> <path d="M808,155 L818,152 L822,162 L818,172 L810,168Z"/>
-            <!-- Maryland --> <path d="M760,158 L790,155 L808,158 L815,168 L810,178 L795,182 L770,180 L758,172Z"/>
-          </g>
-          <!-- OPTN Region shading (subtle) -->
-          <g opacity="0.15">
-            <rect x="100" y="45" width="90" height="220" rx="4" fill="#3b82f6"/>
-            <rect x="200" y="40" width="170" height="140" rx="4" fill="#8b5cf6"/>
-            <rect x="335" y="40" width="130" height="140" rx="4" fill="#f59e0b"/>
-            <rect x="530" y="40" width="140" height="170" rx="4" fill="#10b981"/>
-            <rect x="690" y="65" width="190" height="150" rx="4" fill="#ef4444"/>
+          <!-- US States - Albers USA projection, simplified paths (viewBox 0 0 960 600) -->
+          <g id="statesGroup" fill="#dce4ed" stroke="#bcc8d6" stroke-width="0.7" stroke-linejoin="round">
+            <path id="WA" d="M133,55 L140,47 L155,42 L178,40 L192,44 L195,50 L202,48 L209,52 L210,60 L207,68 L198,78 L185,82 L170,84 L148,80 L135,72 L130,64Z"/>
+            <path id="OR" d="M130,64 L135,72 L148,80 L170,84 L185,82 L198,78 L207,82 L210,95 L206,108 L198,118 L182,122 L162,120 L145,116 L128,108 L122,95 L125,78Z"/>
+            <path id="CA" d="M122,95 L128,108 L145,116 L162,120 L155,138 L148,158 L140,178 L132,200 L122,224 L110,248 L102,260 L95,268 L90,260 L86,240 L84,218 L86,195 L90,172 L95,148 L102,125 L112,105Z"/>
+            <path id="NV" d="M162,120 L182,122 L198,118 L205,128 L200,155 L195,185 L188,208 L170,202 L155,198 L148,178 L155,158 L160,138Z"/>
+            <path id="ID" d="M198,78 L210,60 L218,55 L228,58 L235,68 L238,82 L232,98 L225,110 L218,120 L210,95 L207,82Z"/>
+            <path id="MT" d="M218,55 L248,46 L282,42 L318,40 L340,42 L342,52 L338,65 L328,72 L310,76 L288,78 L262,76 L242,72 L235,68 L228,58Z"/>
+            <path id="WY" d="M242,72 L262,76 L288,78 L310,76 L328,72 L338,65 L345,78 L348,95 L345,112 L338,115 L305,118 L272,116 L248,112 L245,95Z"/>
+            <path id="UT" d="M218,120 L232,115 L248,112 L255,118 L258,138 L255,162 L248,178 L235,182 L218,178 L210,168 L205,148 L205,128Z"/>
+            <path id="CO" d="M272,116 L305,118 L338,115 L358,118 L365,138 L365,162 L358,168 L320,168 L285,165 L272,162 L268,142Z"/>
+            <path id="AZ" d="M140,218 L155,198 L170,202 L188,208 L198,218 L205,238 L200,262 L188,278 L172,282 L155,278 L142,268 L135,248 L138,232Z"/>
+            <path id="NM" d="M205,238 L218,225 L238,218 L262,215 L290,212 L308,212 L315,232 L318,258 L315,278 L298,282 L270,282 L245,278 L228,272 L215,260Z"/>
+            <path id="ND" d="M342,52 L380,48 L418,45 L450,44 L454,55 L452,68 L445,75 L418,78 L388,76 L358,74 L345,72Z"/>
+            <path id="SD" d="M358,74 L388,76 L418,78 L445,75 L452,68 L458,85 L458,102 L452,108 L425,112 L398,110 L372,108 L362,102 L355,90Z"/>
+            <path id="NE" d="M362,108 L398,110 L425,112 L452,108 L468,115 L478,130 L475,145 L452,148 L422,148 L392,145 L370,142 L362,132Z"/>
+            <path id="KS" d="M370,145 L392,145 L422,148 L452,148 L475,145 L480,162 L478,178 L452,180 L418,180 L388,178 L372,175 L368,162Z"/>
+            <path id="OK" d="M372,178 L388,178 L418,180 L452,180 L478,178 L482,195 L480,212 L465,218 L445,222 L420,220 L398,218 L378,215 L372,202 L370,192Z"/>
+            <path id="TX" d="M308,212 L340,208 L372,202 L378,215 L398,218 L420,220 L445,222 L465,218 L480,212 L488,228 L492,252 L488,278 L478,308 L462,338 L442,358 L418,372 L395,378 L378,370 L360,352 L348,330 L338,305 L328,278 L318,258 L315,232Z"/>
+            <path id="MN" d="M454,44 L488,42 L518,40 L538,42 L542,55 L545,72 L542,88 L535,98 L520,102 L502,105 L482,102 L465,98 L458,85 L456,68Z"/>
+            <path id="IA" d="M465,98 L482,102 L502,105 L520,102 L535,98 L548,108 L552,125 L548,140 L535,145 L512,145 L488,142 L472,138 L468,125Z"/>
+            <path id="MO" d="M472,145 L488,145 L512,145 L535,145 L552,148 L558,168 L560,188 L555,205 L540,210 L518,208 L498,205 L482,200 L478,185 L475,168Z"/>
+            <path id="AR" d="M482,210 L498,208 L518,208 L540,210 L548,218 L552,238 L548,255 L535,258 L515,255 L498,252 L488,242 L485,228Z"/>
+            <path id="LA" d="M488,258 L498,255 L515,258 L535,258 L548,255 L555,268 L562,288 L558,308 L548,318 L532,322 L518,318 L505,308 L498,292 L492,275Z"/>
+            <path id="WI" d="M538,42 L562,40 L582,45 L595,55 L600,72 L598,88 L592,98 L578,105 L562,108 L548,105 L542,92 L542,75 L540,58Z"/>
+            <path id="MI" d="M598,42 L618,40 L638,45 L652,55 L658,72 L655,88 L648,98 L638,105 L625,108 L612,105 L602,98 L598,85 L596,68 L598,55Z"/>
+            <path id="IL" d="M562,108 L578,105 L592,108 L598,118 L602,138 L605,162 L602,185 L595,202 L582,208 L568,205 L558,198 L555,178 L552,155 L548,135Z"/>
+            <path id="IN" d="M598,108 L618,105 L632,108 L638,122 L640,145 L638,172 L632,192 L622,198 L608,195 L600,182 L598,158 L596,135Z"/>
+            <path id="OH" d="M638,98 L655,95 L672,98 L688,105 L695,122 L692,148 L685,172 L675,185 L660,188 L645,185 L638,172 L636,148 L636,122Z"/>
+            <path id="KY" d="M595,202 L608,198 L622,198 L638,195 L660,192 L678,195 L698,200 L710,205 L708,218 L695,225 L675,225 L652,222 L628,220 L605,218 L598,212Z"/>
+            <path id="TN" d="M598,218 L618,220 L645,222 L672,225 L695,225 L715,228 L728,235 L722,248 L705,252 L678,252 L648,250 L618,248 L598,245 L595,235Z"/>
+            <path id="MS" d="M548,258 L562,255 L575,260 L580,278 L582,302 L578,318 L568,325 L558,322 L552,305 L548,282Z"/>
+            <path id="AL" d="M575,252 L598,248 L618,248 L632,252 L638,272 L638,298 L632,318 L618,325 L605,322 L595,312 L585,295 L580,275 L576,260Z"/>
+            <path id="GA" d="M632,248 L652,245 L672,248 L688,255 L698,272 L700,298 L695,318 L682,328 L665,325 L648,318 L638,302 L636,278 L634,262Z"/>
+            <path id="FL" d="M648,328 L668,325 L685,328 L700,325 L712,332 L722,348 L730,372 L728,398 L718,418 L702,428 L688,425 L678,412 L672,392 L668,368 L662,348Z"/>
+            <path id="SC" d="M688,248 L708,242 L728,245 L738,258 L735,275 L722,282 L705,278 L695,268Z"/>
+            <path id="NC" d="M698,218 L718,212 L742,210 L768,215 L792,222 L798,235 L788,242 L762,245 L738,242 L718,238 L700,238Z"/>
+            <path id="VA" d="M695,195 L718,190 L745,192 L772,198 L795,205 L800,218 L792,222 L772,218 L748,215 L722,212 L702,210Z"/>
+            <path id="WV" d="M692,172 L705,168 L718,172 L722,185 L718,198 L708,202 L698,198 L692,188Z"/>
+            <path id="PA" d="M695,122 L722,118 L752,112 L782,115 L798,118 L802,135 L798,152 L785,158 L758,158 L732,155 L708,152 L700,142Z"/>
+            <path id="NY" d="M738,82 L765,75 L792,72 L818,78 L832,88 L838,105 L828,118 L812,122 L798,118 L782,115 L758,112 L742,108 L738,95Z"/>
+            <path id="VT" d="M812,60 L822,55 L828,65 L832,78 L828,85 L818,82 L815,72Z"/>
+            <path id="NH" d="M825,52 L835,48 L840,58 L838,72 L835,78 L828,72 L825,62Z"/>
+            <path id="ME" d="M838,28 L852,22 L865,30 L870,48 L865,62 L855,68 L845,62 L840,48Z"/>
+            <path id="MA" d="M832,92 L852,88 L872,90 L878,98 L868,105 L848,102 L835,100Z"/>
+            <path id="CT" d="M835,105 L848,102 L858,105 L858,115 L848,118 L838,115Z"/>
+            <path id="RI" d="M858,98 L868,96 L870,105 L865,108 L858,105Z"/>
+            <path id="NJ" d="M800,128 L812,122 L818,132 L818,148 L812,158 L802,155 L798,142Z"/>
+            <path id="DE" d="M805,158 L815,155 L818,165 L815,175 L808,172Z"/>
+            <path id="MD" d="M758,162 L785,158 L802,162 L808,172 L805,182 L792,188 L768,185 L755,178Z"/>
           </g>
           <!-- Transport routes (curved arcs) -->
-          <path d="M580,218 Q680,160 778,173" stroke="#ef4444" stroke-width="2.5" fill="none" stroke-dasharray="6,3" opacity="0.8">
+          <path d="M582,178 Q690,130 828,98" stroke="#ef4444" stroke-width="2.5" fill="none" stroke-dasharray="6,3" opacity="0.7">
             <animate attributeName="stroke-dashoffset" from="18" to="0" dur="1s" repeatCount="indefinite"/>
           </path>
-          <circle r="6" fill="#ef4444" filter="url(#glow)">
-            <animateMotion dur="2.5s" repeatCount="indefinite" path="M580,218 Q680,160 778,173"/>
+          <circle r="5" fill="#ef4444" filter="url(#glow)">
+            <animateMotion dur="2.5s" repeatCount="indefinite" path="M582,178 Q690,130 828,98"/>
           </circle>
-          <path d="M658,368 Q620,280 580,218" stroke="#f59e0b" stroke-width="2.5" fill="none" stroke-dasharray="6,3" opacity="0.8">
+          <path d="M668,298 Q628,230 582,178" stroke="#f97316" stroke-width="2.5" fill="none" stroke-dasharray="6,3" opacity="0.7">
             <animate attributeName="stroke-dashoffset" from="18" to="0" dur="1s" repeatCount="indefinite"/>
           </path>
-          <circle r="6" fill="#f59e0b" filter="url(#glow)">
-            <animateMotion dur="2.5s" repeatCount="indefinite" path="M658,368 Q620,280 580,218"/>
+          <circle r="5" fill="#f97316" filter="url(#glow)">
+            <animateMotion dur="2.5s" repeatCount="indefinite" path="M668,298 Q628,230 582,178"/>
           </circle>
-          <path d="M778,173 Q620,240 440,398" stroke="#10b981" stroke-width="2.5" fill="none" stroke-dasharray="6,3" opacity="0.8">
+          <path d="M828,98 Q630,215 418,302" stroke="#22c55e" stroke-width="2.5" fill="none" stroke-dasharray="6,3" opacity="0.7">
             <animate attributeName="stroke-dashoffset" from="18" to="0" dur="1.2s" repeatCount="indefinite"/>
           </path>
-          <circle r="6" fill="#10b981" filter="url(#glow)">
-            <animateMotion dur="3s" repeatCount="indefinite" path="M778,173 Q620,240 440,398"/>
+          <circle r="5" fill="#22c55e" filter="url(#glow)">
+            <animateMotion dur="3s" repeatCount="indefinite" path="M828,98 Q630,215 418,302"/>
           </circle>
           <!-- Transplant center pins -->
           <g>
-            <!-- Chicago -->
-            <circle cx="580" cy="218" r="12" fill="#1e3a5f" stroke="white" stroke-width="2.5" filter="url(#glow)"/>
-            <circle cx="580" cy="218" r="5" fill="white"/>
-            <text x="580" y="240" text-anchor="middle" font-size="10" font-weight="700" fill="#1e3a5f">Chicago</text>
-            <text x="580" y="251" text-anchor="middle" font-size="8" fill="#64748b">MWTC</text>
-            <!-- Boston -->
-            <circle cx="778" cy="173" r="12" fill="#1e3a5f" stroke="white" stroke-width="2.5" filter="url(#glow)"/>
-            <circle cx="778" cy="173" r="5" fill="white"/>
-            <text x="778" y="195" text-anchor="middle" font-size="10" font-weight="700" fill="#1e3a5f">Boston</text>
-            <text x="778" y="206" text-anchor="middle" font-size="8" fill="#64748b">NETC</text>
-            <!-- Atlanta -->
-            <circle cx="658" cy="368" r="12" fill="#1e3a5f" stroke="white" stroke-width="2.5" filter="url(#glow)"/>
-            <circle cx="658" cy="368" r="5" fill="white"/>
-            <text x="658" y="390" text-anchor="middle" font-size="10" font-weight="700" fill="#1e3a5f">Atlanta</text>
-            <text x="658" y="401" text-anchor="middle" font-size="8" fill="#64748b">SETC</text>
-            <!-- Dallas -->
-            <circle cx="440" cy="398" r="12" fill="#1e3a5f" stroke="white" stroke-width="2.5" filter="url(#glow)"/>
-            <circle cx="440" cy="398" r="5" fill="white"/>
-            <text x="440" y="420" text-anchor="middle" font-size="10" font-weight="700" fill="#1e3a5f">Dallas</text>
-            <text x="440" y="431" text-anchor="middle" font-size="8" fill="#64748b">SWTC</text>
-            <!-- San Francisco -->
-            <circle cx="118" cy="200" r="12" fill="#1e3a5f" stroke="white" stroke-width="2.5" filter="url(#glow)"/>
-            <circle cx="118" cy="200" r="5" fill="white"/>
-            <text x="118" y="222" text-anchor="middle" font-size="10" font-weight="700" fill="#1e3a5f">San Francisco</text>
-            <text x="118" y="233" text-anchor="middle" font-size="8" fill="#64748b">WCTC</text>
+            <!-- Chicago, IL -->
+            <circle cx="582" cy="178" r="11" fill="#1e40af" stroke="white" stroke-width="2.5" filter="url(#pinShadow)"/>
+            <circle cx="582" cy="178" r="4" fill="white"/>
+            <rect x="553" y="192" width="58" height="18" rx="4" fill="white" fill-opacity="0.9" filter="url(#pinShadow)"/>
+            <text x="582" y="204" text-anchor="middle" font-size="9" font-weight="700" fill="#1e40af">Chicago</text>
+            <!-- Boston, MA -->
+            <circle cx="828" cy="98" r="11" fill="#1e40af" stroke="white" stroke-width="2.5" filter="url(#pinShadow)"/>
+            <circle cx="828" cy="98" r="4" fill="white"/>
+            <rect x="805" y="112" width="46" height="18" rx="4" fill="white" fill-opacity="0.9" filter="url(#pinShadow)"/>
+            <text x="828" y="124" text-anchor="middle" font-size="9" font-weight="700" fill="#1e40af">Boston</text>
+            <!-- Atlanta, GA -->
+            <circle cx="668" cy="298" r="11" fill="#1e40af" stroke="white" stroke-width="2.5" filter="url(#pinShadow)"/>
+            <circle cx="668" cy="298" r="4" fill="white"/>
+            <rect x="643" y="312" width="50" height="18" rx="4" fill="white" fill-opacity="0.9" filter="url(#pinShadow)"/>
+            <text x="668" y="324" text-anchor="middle" font-size="9" font-weight="700" fill="#1e40af">Atlanta</text>
+            <!-- Dallas, TX -->
+            <circle cx="418" cy="302" r="11" fill="#1e40af" stroke="white" stroke-width="2.5" filter="url(#pinShadow)"/>
+            <circle cx="418" cy="302" r="4" fill="white"/>
+            <rect x="398" y="316" width="40" height="18" rx="4" fill="white" fill-opacity="0.9" filter="url(#pinShadow)"/>
+            <text x="418" y="328" text-anchor="middle" font-size="9" font-weight="700" fill="#1e40af">Dallas</text>
+            <!-- San Francisco, CA -->
+            <circle cx="98" cy="198" r="11" fill="#1e40af" stroke="white" stroke-width="2.5" filter="url(#pinShadow)"/>
+            <circle cx="98" cy="198" r="4" fill="white"/>
+            <rect x="55" y="212" width="86" height="18" rx="4" fill="white" fill-opacity="0.9" filter="url(#pinShadow)"/>
+            <text x="98" y="224" text-anchor="middle" font-size="9" font-weight="700" fill="#1e40af">San Francisco</text>
           </g>
           <!-- Legend -->
-          <g transform="translate(20,510)">
-            <rect width="260" height="75" rx="8" fill="white" stroke="#e2e8f0" filter="url(#glow)" opacity="0.95"/>
-            <text x="12" y="18" font-size="10" font-weight="700" fill="#334155">Active Transports</text>
-            <circle cx="18" cy="32" r="5" fill="#ef4444"/><text x="28" y="36" font-size="10" fill="#475569">Kidney (L) — Charter Flight</text>
-            <circle cx="18" cy="48" r="5" fill="#f59e0b"/><text x="28" y="52" font-size="10" fill="#475569">Heart — Charter Flight</text>
-            <circle cx="18" cy="64" r="5" fill="#10b981"/><text x="28" y="68" font-size="10" fill="#475569">Liver — Ground Courier</text>
+          <g transform="translate(18,505)">
+            <rect width="260" height="78" rx="8" fill="white" fill-opacity="0.95" stroke="#e2e8f0"/>
+            <text x="12" y="18" font-size="10" font-weight="700" fill="#334155">Active Organ Transports</text>
+            <circle cx="18" cy="34" r="5" fill="#ef4444"/><text x="30" y="38" font-size="10" fill="#475569">Kidney (L) — Charter Flight</text>
+            <circle cx="18" cy="52" r="5" fill="#f97316"/><text x="30" y="56" font-size="10" fill="#475569">Heart — Charter Flight</text>
+            <circle cx="18" cy="70" r="5" fill="#22c55e"/><text x="30" y="74" font-size="10" fill="#475569">Liver — Ground Courier</text>
           </g>
         </svg>
       </div>
@@ -1459,7 +1460,7 @@ body {
         <text x="860" y="452" text-anchor="middle" font-size="10" fill="#666">CloudFront + Cognito + Lambda</text>
 
         <!-- Event Backbone -->
-        <rect x="30" y="510" width="940" height="45" rx="6" fill="#1a4480" stroke="#0f2d52" stroke-width="2"/>
+        <rect x="30" y="510" width="940" height="45" rx="6" fill="#1e40af" stroke="#1e3a8a" stroke-width="2"/>
         <text x="500" y="537" text-anchor="middle" font-size="14" font-weight="700" fill="white">Amazon MSK (Kafka) — Event Backbone</text>
 
         <!-- Connection lines (services to backbone) -->
@@ -1517,6 +1518,8 @@ body {
 
 <!-- Demo Mode Overlay -->
 <div class="demo-overlay" id="demoOverlay"></div>
+<div class="demo-spotlight" id="demoSpotlight" style="display:none;"></div>
+<div class="demo-spotlight-glow" id="demoSpotlightGlow" style="display:none;"></div>
 <div class="demo-panel" id="demoPanel">
   <div class="demo-panel-header">
     <h3>Guided Demo</h3>
@@ -2540,7 +2543,10 @@ const DemoMode = {
   stop() {
     this.active = false;
     document.getElementById('demoOverlay').classList.remove('active');
+    document.getElementById('demoOverlay').classList.remove('has-spotlight');
     document.getElementById('demoPanel').classList.remove('active');
+    document.getElementById('demoSpotlight').style.display = 'none';
+    document.getElementById('demoSpotlightGlow').style.display = 'none';
     document.getElementById('startDemoBtn').textContent = 'Start Guided Demo';
     document.getElementById('startDemoBtn').style.opacity = '1';
   },
@@ -2587,12 +2593,36 @@ const DemoMode = {
     document.getElementById('demoPrevBtn').style.visibility = this.step === 0 ? 'hidden' : 'visible';
     document.getElementById('demoNextBtn').textContent = this.step === DEMO_STEPS.length - 1 ? 'Finish' : 'Next';
 
-    // Scroll highlight into view
+    // Spotlight highlight
+    const spotlight = document.getElementById('demoSpotlight');
+    const spotlightGlow = document.getElementById('demoSpotlightGlow');
+    const overlay = document.getElementById('demoOverlay');
+
     if (s.highlight) {
       setTimeout(() => {
         const el = document.querySelector(s.highlight);
-        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Position spotlight after scroll settles
+          setTimeout(() => {
+            const rect = el.getBoundingClientRect();
+            const pad = 8;
+            const props = {
+              top: (rect.top - pad) + 'px',
+              left: (rect.left - pad) + 'px',
+              width: (rect.width + pad * 2) + 'px',
+              height: (rect.height + pad * 2) + 'px'
+            };
+            Object.assign(spotlight.style, props, { display: 'block' });
+            Object.assign(spotlightGlow.style, props, { display: 'block' });
+            overlay.classList.add('has-spotlight');
+          }, 400);
+        }
       }, 300);
+    } else {
+      spotlight.style.display = 'none';
+      spotlightGlow.style.display = 'none';
+      overlay.classList.remove('has-spotlight');
     }
   }
 };
