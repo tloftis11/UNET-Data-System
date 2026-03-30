@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNet Next — Modernized OPTN Data Platform Demo</title>
+<style>
+/* ========== CSS DESIGN SYSTEM ========== */
+:root {
+  --color-primary: #1a4480;
+  --color-primary-dark: #0f2d52;
+  --color-primary-light: #2e6db4;
+  --color-accent: #00a91c;
+  --color-accent-dark: #008817;
+  --color-warning: #e5a000;
+  --color-error: #d54309;
+  --color-info: #00bde3;
+  --color-tier1: #d54309;
+  --color-tier2: #e5a000;
+  --color-tier3: #1a4480;
+  --color-bg: #f0f0f0;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f7f7f7;
+  --color-border: #dfe1e2;
+  --color-text: #1b1b1b;
+  --color-text-secondary: #565c65;
+  --color-text-inverse: #ffffff;
+  --font-sans: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'SF Mono', 'Consolas', 'Liberation Mono', 'Menlo', monospace;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+}
+
+/* ========== RESET & BASE ========== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body {
+  font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* ========== TOP HEADER ========== */
+.top-header {
+  background: var(--color-primary-dark);
+  color: var(--color-text-inverse);
+  padding: 8px 24px;
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.top-header span { opacity: 0.8; }
+
+.main-header {
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  z-index: 10;
+}
+.main-header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+.main-header .subtitle {
+  font-size: 13px;
+  opacity: 0.8;
+  font-weight: 400;
+}
+.header-logo {
+  width: 40px; height: 40px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 700;
+  flex-shrink: 0;
+}
+.header-right {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 16px;
+  font-size: 13px;
+}
+.header-right .status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--color-accent);
+  display: inline-block;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ========== TAB NAVIGATION ========== */
+.tab-nav {
+  background: var(--color-surface);
+  border-bottom: 2px solid var(--color-border);
+  display: flex;
+  gap: 0;
+  padding: 0 24px;
+  overflow-x: auto;
+}
+.tab-btn {
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  font-family: var(--font-sans);
+}
+.tab-btn:hover {
+  color: var(--color-primary);
+  background: var(--color-surface-alt);
+}
+.tab-btn.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+/* ========== MAIN CONTENT ========== */
+.main-content {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ========== CARD SYSTEM ========== */
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-border);
+}
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+.card-subtitle {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+/* ========== GRID HELPERS ========== */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.flex-row { display: flex; gap: 16px; align-items: center; }
+.flex-col { display: flex; flex-direction: column; gap: 8px; }
+
+/* ========== STAT CARDS ========== */
+.stat-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px; height: 100%;
+}
+.stat-card.tier1::before { background: var(--color-tier1); }
+.stat-card.tier2::before { background: var(--color-tier2); }
+.stat-card.tier3::before { background: var(--color-tier3); }
+.stat-card.accent::before { background: var(--color-accent); }
+.stat-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+.stat-value {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--color-text);
+  line-height: 1.2;
+  margin: 4px 0;
+}
+.stat-change {
+  font-size: 12px;
+  color: var(--color-accent-dark);
+  font-weight: 500;
+}
+.stat-change.negative { color: var(--color-error); }
+
+/* ========== TABLES ========== */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.data-table th {
+  background: var(--color-surface-alt);
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--color-border);
+  white-space: nowrap;
+}
+.data-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--color-border);
+  vertical-align: middle;
+}
+.data-table tbody tr:hover { background: #f5f8ff; }
+
+/* ========== BADGES & PILLS ========== */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+}
+.badge-active { background: #d4edda; color: #155724; }
+.badge-inactive { background: #f8d7da; color: #721c24; }
+.badge-pending { background: #fff3cd; color: #856404; }
+.badge-urgent { background: #d54309; color: white; }
+.badge-info { background: #d1ecf1; color: #0c5460; }
+.badge-tier1 { background: #fde8e1; color: var(--color-tier1); }
+.badge-tier2 { background: #fef3cd; color: #856404; }
+.badge-tier3 { background: #dce8f5; color: var(--color-tier3); }
+
+/* ========== BUTTONS ========== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.15s ease;
+}
+.btn-primary {
+  background: var(--color-primary);
+  color: white;
+  border-color: var(--color-primary);
+}
+.btn-primary:hover { background: var(--color-primary-dark); }
+.btn-secondary {
+  background: white;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+}
+.btn-secondary:hover { background: #f0f4ff; }
+.btn-success {
+  background: var(--color-accent);
+  color: white;
+}
+.btn-success:hover { background: var(--color-accent-dark); }
+.btn-danger {
+  background: var(--color-error);
+  color: white;
+}
+.btn-danger:hover { background: #b8360a; }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ========== EVENT FEED ========== */
+.event-feed {
+  max-height: 400px;
+  overflow-y: auto;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: #1b1b1b;
+  color: #e0e0e0;
+  border-radius: var(--radius-md);
+  padding: 12px;
+}
+.event-feed-item {
+  padding: 4px 0;
+  border-bottom: 1px solid #333;
+  display: flex;
+  gap: 10px;
+  animation: feed-in 0.3s ease;
+}
+@keyframes feed-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.event-time { color: #888; white-space: nowrap; }
+.event-type { font-weight: 600; min-width: 180px; }
+.event-type.match { color: #ff6b6b; }
+.event-type.offer { color: #ffd93d; }
+.event-type.waitlist { color: #6bcb77; }
+.event-type.donor { color: #4d96ff; }
+.event-type.transport { color: #9b59b6; }
+.event-type.system { color: #888; }
+
+/* ========== PROGRESS PIPELINE ========== */
+.pipeline {
+  display: flex;
+  gap: 0;
+  margin: 16px 0;
+}
+.pipeline-step {
+  flex: 1;
+  text-align: center;
+  padding: 12px 8px;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  position: relative;
+  color: var(--color-text-secondary);
+}
+.pipeline-step.completed {
+  background: #d4edda;
+  color: #155724;
+  border-color: #b1dfbb;
+}
+.pipeline-step.active {
+  background: #cce5ff;
+  color: #004085;
+  border-color: #99caff;
+}
+.pipeline-step:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
+.pipeline-step:last-child { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
+.pipeline-step-label { font-size: 10px; display: block; margin-top: 2px; font-weight: 400; }
+
+/* ========== OFFER CASCADE ========== */
+.offer-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--color-border);
+  gap: 12px;
+  font-size: 13px;
+}
+.offer-row.accepted { background: #d4edda; }
+.offer-row.declined { background: #fff3cd; }
+.offer-row.pending { background: #e8f0fe; }
+.offer-row.timed-out { background: #f8f8f8; color: #999; }
+.offer-rank {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 13px;
+  flex-shrink: 0;
+}
+
+/* ========== TIMER ========== */
+.countdown-timer {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--color-primary);
+  background: var(--color-surface-alt);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  display: inline-block;
+}
+.countdown-timer.urgent { color: var(--color-error); animation: blink 1s step-end infinite; }
+@keyframes blink { 50% { opacity: 0.5; } }
+
+/* ========== SVG MAP ========== */
+.map-container {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  position: relative;
+}
+.map-container svg { width: 100%; height: auto; }
+
+/* ========== ARCHITECTURE DIAGRAM ========== */
+.arch-node {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.arch-node:hover { filter: brightness(1.1); }
+
+/* ========== SCORE BAR ========== */
+.score-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.score-bar {
+  flex: 1;
+  height: 8px;
+  background: var(--color-border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.score-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+.score-bar-fill.high { background: var(--color-accent); }
+.score-bar-fill.medium { background: var(--color-warning); }
+.score-bar-fill.low { background: var(--color-error); }
+
+/* ========== AUDIT LOG ========== */
+.audit-log {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+.audit-entry {
+  padding: 3px 0;
+  border-bottom: 1px solid #eee;
+}
+
+/* ========== CHART PLACEHOLDER ========== */
+.chart-area {
+  position: relative;
+  height: 200px;
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  padding: 8px 0;
+}
+.chart-bar {
+  flex: 1;
+  background: var(--color-primary);
+  border-radius: 3px 3px 0 0;
+  position: relative;
+  transition: height 0.5s ease;
+  min-width: 20px;
+  opacity: 0.8;
+}
+.chart-bar:hover { opacity: 1; }
+.chart-bar-label {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+/* ========== MISC ========== */
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--color-primary-dark);
+}
+.text-muted { color: var(--color-text-secondary); font-size: 13px; }
+.text-mono { font-family: var(--font-mono); }
+.mt-8 { margin-top: 8px; }
+.mt-16 { margin-top: 16px; }
+.mb-8 { margin-bottom: 8px; }
+.mb-16 { margin-bottom: 16px; }
+.tag {
+  display: inline-block;
+  padding: 1px 6px;
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: 3px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+}
+.separator { border: none; border-top: 1px solid var(--color-border); margin: 16px 0; }
+
+/* ========== SCROLLBAR STYLING ========== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #aaa; }
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 900px) {
+  .grid-4 { grid-template-columns: 1fr 1fr; }
+  .grid-3 { grid-template-columns: 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .tab-nav { padding: 0 8px; }
+  .main-content { padding: 16px; }
+}
+
+/* ========== DETAIL PANEL ========== */
+.detail-panel {
+  background: var(--color-surface-alt);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 16px;
+}
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 13px;
+}
+.detail-label { color: var(--color-text-secondary); font-weight: 500; }
+.detail-value { font-weight: 600; }
+
+/* ========== SEARCH ========== */
+.search-input {
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-family: var(--font-sans);
+  width: 280px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.search-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 2px rgba(26,68,128,0.15); }
+
+/* ========== TOOLTIP ========== */
+.tooltip-container { position: relative; }
+.tooltip {
+  display: none;
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  white-space: nowrap;
+  z-index: 100;
+  margin-bottom: 4px;
+}
+.tooltip-container:hover .tooltip { display: block; }
+
+/* ========== SELECT ========== */
+.select-input {
+  padding: 8px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-family: var(--font-sans);
+  background: white;
+  outline: none;
+  cursor: pointer;
+}
+.select-input:focus { border-color: var(--color-primary); }
+</style>
+</head>
+<body>
+
+<!-- ========== TOP BAR ========== -->
+<div class="top-header">
+  <span>U.S. Department of Health &amp; Human Services &mdash; Health Resources and Services Administration</span>
+  <span>DEMO ENVIRONMENT &mdash; Not for clinical use</span>
+</div>
+
+<!-- ========== MAIN HEADER ========== -->
+<header class="main-header">
+  <div class="header-logo">U</div>
+  <div>
+    <h1>UNet Next <span class="subtitle">Modernized OPTN Data Platform</span></h1>
+  </div>
+  <div class="header-right">
+    <span><span class="status-dot"></span> All Systems Operational</span>
+    <span>|</span>
+    <span>Demo User: Dr. Sarah Chen</span>
+    <span>|</span>
+    <span>Midwest Transplant Center</span>
+  </div>
+</header>
+
+<!-- ========== TAB NAVIGATION ========== -->
+<nav class="tab-nav" id="tabNav">
+  <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+  <button class="tab-btn" data-tab="matching">Matching &amp; Allocation</button>
+  <button class="tab-btn" data-tab="offers">Organ Offers</button>
+  <button class="tab-btn" data-tab="waitlist">Waitlist</button>
+  <button class="tab-btn" data-tab="donors">Donor Management</button>
+  <button class="tab-btn" data-tab="transport">Transport &amp; Logistics</button>
+  <button class="tab-btn" data-tab="analytics">Analytics &amp; AI</button>
+  <button class="tab-btn" data-tab="architecture">Architecture</button>
+</nav>
+
+<!-- ========== MAIN CONTENT AREA ========== -->
+<div class="main-content">
+
+  <!-- DASHBOARD TAB -->
+  <div class="tab-panel active" id="tab-dashboard">
+    <p class="text-muted">Loading...</p>
+  </div>
+
+  <!-- MATCHING TAB -->
+  <div class="tab-panel" id="tab-matching">
+    <p class="text-muted">Loading...</p>
+  </div>
+
+  <!-- OFFERS TAB -->
+  <div class="tab-panel" id="tab-offers">
+    <p class="text-muted">Loading...</p>
+  </div>
+
+  <!-- WAITLIST TAB -->
+  <div class="tab-panel" id="tab-waitlist">
+    <p class="text-muted">Loading...</p>
+  </div>
+
+  <!-- DONORS TAB -->
+  <div class="tab-panel" id="tab-donors">
+    <p class="text-muted">Loading...</p>
+  </div>
+
+  <!-- TRANSPORT TAB -->
+  <div class="tab-panel" id="tab-transport">
+    <p class="text-muted">Loading...</p>
+  </div>
+
+  <!-- ANALYTICS TAB -->
+  <div class="tab-panel" id="tab-analytics">
+    <p class="text-muted">Loading...</p>
+  </div>
+
+  <!-- ARCHITECTURE TAB -->
+  <div class="tab-panel" id="tab-architecture">
+    <p class="text-muted">Loading...</p>
+  </div>
+
+</div>
+
+<script>
+// ========== TAB NAVIGATION ==========
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ========== EVENT BUS ==========
+const EventBus = {
+  _listeners: {},
+  on(event, fn) {
+    if (!this._listeners[event]) this._listeners[event] = [];
+    this._listeners[event].push(fn);
+  },
+  emit(event, data) {
+    const entry = { event, data, timestamp: new Date() };
+    EventBus._history.push(entry);
+    if (EventBus._history.length > 200) EventBus._history.shift();
+    (this._listeners[event] || []).forEach(fn => fn(data, entry));
+    (this._listeners['*'] || []).forEach(fn => fn(data, entry));
+  },
+  _history: []
+};
+
+// ========== MOCK DATA ==========
+const CENTERS = [
+  { id: 'MWTC', name: 'Midwest Transplant Center', city: 'Chicago, IL', lat: 41.88, lon: -87.63 },
+  { id: 'NETC', name: 'Northeast Medical Center', city: 'Boston, MA', lat: 42.36, lon: -71.06 },
+  { id: 'SETC', name: 'Southeast Transplant Institute', city: 'Atlanta, GA', lat: 33.75, lon: -84.39 },
+  { id: 'SWTC', name: 'Southwest Transplant Hospital', city: 'Dallas, TX', lat: 32.78, lon: -96.80 },
+  { id: 'WCTC', name: 'West Coast Transplant Center', city: 'San Francisco, CA', lat: 37.77, lon: -122.42 }
+];
+
+const OPOS = [
+  { id: 'OPO-MW1', name: 'Gift of Hope', region: 'Region 7', city: 'Itasca, IL' },
+  { id: 'OPO-NE1', name: 'New England Organ Bank', region: 'Region 1', city: 'Waltham, MA' },
+  { id: 'OPO-SE1', name: 'LifeLink Foundation', region: 'Region 3', city: 'Tampa, FL' }
+];
+
+const BLOOD_TYPES = ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'];
+const ORGAN_TYPES = ['Kidney', 'Liver', 'Heart', 'Lung'];
+const STATUSES = ['Active', 'Inactive', 'Temporarily Inactive'];
+
+function randomFrom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function randomInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function randomFloat(min, max, dec) { return parseFloat((Math.random() * (max - min) + min).toFixed(dec || 1)); }
+function generateId() { return 'PT-' + randomInt(100000, 999999); }
+function daysAgo(n) { const d = new Date(); d.setDate(d.getDate() - n); return d; }
+
+const FIRST_NAMES = ['James','Maria','Robert','Linda','Michael','Patricia','David','Jennifer','William','Sarah',
+  'Carlos','Aisha','Chen','Kenji','Olga','Raj','Fatima','Ahmed','Yuki','Priya','Thomas','Angela',
+  'Diego','Sonia','Marcus','Elena','Omar','Linh','Kwame','Ingrid','Jamal','Mei','Pedro','Svetlana',
+  'Emmanuel','Rosa','Hiroshi','Amara','Viktor','Leila','Brandon','Nadia','Terrence','Chloe','Dante','Suki'];
+const LAST_NAMES = ['Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis','Rodriguez','Martinez',
+  'Anderson','Thomas','Taylor','Moore','Jackson','Martin','Lee','Perez','Thompson','White','Harris',
+  'Sanchez','Clark','Lewis','Robinson','Walker','Young','Allen','King','Wright','Lopez','Hill',
+  'Scott','Green','Adams','Baker','Gonzalez','Nelson','Carter','Mitchell','Patel','Kim','Nakamura','Singh'];
+
+// Generate candidates
+const CANDIDATES = [];
+for (let i = 0; i < 50; i++) {
+  const organ = randomFrom(ORGAN_TYPES);
+  let score = null, scoreName = '';
+  if (organ === 'Kidney') { scoreName = 'EPTS'; score = randomFloat(0, 100, 1); }
+  else if (organ === 'Liver') { scoreName = 'MELD'; score = randomInt(6, 40); }
+  else if (organ === 'Heart') { scoreName = 'Status'; score = randomFrom(['1A', '1B', '2', '3', '4', '5', '6']); }
+  else if (organ === 'Lung') { scoreName = 'CAS'; score = randomFloat(20, 90, 1); }
+
+  CANDIDATES.push({
+    id: generateId(),
+    firstName: randomFrom(FIRST_NAMES),
+    lastName: randomFrom(LAST_NAMES),
+    age: randomInt(18, 72),
+    bloodType: randomFrom(BLOOD_TYPES),
+    organ,
+    status: i < 42 ? 'Active' : randomFrom(['Inactive', 'Temporarily Inactive']),
+    center: randomFrom(CENTERS),
+    waitDays: randomInt(1, 1800),
+    scoreName,
+    score,
+    cpra: organ === 'Kidney' ? randomInt(0, 100) : null,
+    registeredDate: daysAgo(randomInt(1, 1800)),
+    lastUpdated: daysAgo(randomInt(0, 30))
+  });
+}
+
+// Generate donors
+const DONORS = [
+  { id: 'DNR-001', firstName: 'Donor', lastName: 'A', age: 34, bloodType: 'O+', opo: OPOS[0], cause: 'CVA/Stroke', bmi: 24.5, kdpi: 18, organs: ['Kidney (L)', 'Kidney (R)', 'Liver', 'Heart'], stage: 'Organ Recovery', stageIdx: 4 },
+  { id: 'DNR-002', firstName: 'Donor', lastName: 'B', age: 45, bloodType: 'A-', opo: OPOS[1], cause: 'Head Trauma', bmi: 27.1, kdpi: 35, organs: ['Kidney (L)', 'Kidney (R)', 'Liver'], stage: 'Family Authorization', stageIdx: 3 },
+  { id: 'DNR-003', firstName: 'Donor', lastName: 'C', age: 22, bloodType: 'B+', opo: OPOS[2], cause: 'Anoxia', bmi: 22.3, kdpi: 8, organs: ['Kidney (L)', 'Kidney (R)', 'Liver', 'Heart', 'Lung (L)', 'Lung (R)'], stage: 'Donor Management', stageIdx: 3 },
+  { id: 'DNR-004', firstName: 'Donor', lastName: 'D', age: 55, bloodType: 'A+', opo: OPOS[0], cause: 'CVA/Stroke', bmi: 30.2, kdpi: 62, organs: ['Kidney (L)', 'Kidney (R)'], stage: 'OPO Evaluation', stageIdx: 2 },
+  { id: 'DNR-005', firstName: 'Donor', lastName: 'E', age: 29, bloodType: 'O-', opo: OPOS[1], cause: 'Head Trauma', bmi: 23.8, kdpi: 12, organs: ['Kidney (L)', 'Kidney (R)', 'Liver', 'Heart', 'Lung (L)', 'Lung (R)'], stage: 'Organ Recovery', stageIdx: 4 },
+  { id: 'DNR-006', firstName: 'Donor', lastName: 'F', age: 41, bloodType: 'AB+', opo: OPOS[2], cause: 'CVA/Stroke', bmi: 26.0, kdpi: 40, organs: ['Kidney (L)', 'Liver'], stage: 'Hospital Referral', stageIdx: 1 },
+  { id: 'DNR-007', firstName: 'Donor', lastName: 'G', age: 38, bloodType: 'B-', opo: OPOS[0], cause: 'Anoxia', bmi: 25.5, kdpi: 28, organs: ['Kidney (L)', 'Kidney (R)', 'Liver', 'Heart'], stage: 'Organ Recovery', stageIdx: 4 },
+  { id: 'DNR-008', firstName: 'Donor', lastName: 'H', age: 50, bloodType: 'O+', opo: OPOS[1], cause: 'Head Trauma', bmi: 29.0, kdpi: 55, organs: ['Kidney (L)', 'Kidney (R)'], stage: 'Family Authorization', stageIdx: 3 }
+];
+
+// Transport items
+const TRANSPORTS = [
+  { id: 'TRK-1001', organ: 'Kidney (L)', donor: DONORS[0], from: CENTERS[0], to: CENTERS[1], status: 'In Transit', progress: 65, ischemia: 185, method: 'Charter Flight' },
+  { id: 'TRK-1002', organ: 'Heart', donor: DONORS[2], from: CENTERS[2], to: CENTERS[0], status: 'In Transit', progress: 30, ischemia: 72, method: 'Charter Flight' },
+  { id: 'TRK-1003', organ: 'Liver', donor: DONORS[4], from: CENTERS[1], to: CENTERS[3], status: 'In Transit', progress: 85, ischemia: 320, method: 'Ground Courier' },
+  { id: 'TRK-1004', organ: 'Kidney (R)', donor: DONORS[0], from: CENTERS[0], to: CENTERS[4], status: 'Arrived', progress: 100, ischemia: 240, method: 'Commercial Flight' },
+  { id: 'TRK-1005', organ: 'Lung (L)', donor: DONORS[2], from: CENTERS[2], to: CENTERS[3], status: 'Packaging', progress: 5, ischemia: 12, method: 'Charter Flight' }
+];
+
+// ========== UTILITY FUNCTIONS ==========
+function formatTime(d) {
+  if (!d) d = new Date();
+  return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+}
+function formatDate(d) {
+  return d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+}
+function formatMinutes(m) {
+  const h = Math.floor(m / 60);
+  const mins = m % 60;
+  return h > 0 ? `${h}h ${mins}m` : `${mins}m`;
+}
+</script>
+
+</body>
+</html>
