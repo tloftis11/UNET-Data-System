@@ -7,42 +7,47 @@
 <style>
 /* ========== CSS DESIGN SYSTEM ========== */
 :root {
-  --color-primary: #1a4480;
-  --color-primary-dark: #0f2d52;
-  --color-primary-light: #2e6db4;
-  --color-accent: #00a91c;
-  --color-accent-dark: #008817;
-  --color-warning: #e5a000;
-  --color-error: #d54309;
-  --color-info: #00bde3;
-  --color-tier1: #d54309;
-  --color-tier2: #e5a000;
-  --color-tier3: #1a4480;
-  --color-bg: #f0f0f0;
+  --color-primary: #1e3a5f;
+  --color-primary-dark: #0d1f3c;
+  --color-primary-light: #3b6fa0;
+  --color-accent: #10b981;
+  --color-accent-dark: #059669;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #06b6d4;
+  --color-tier1: #ef4444;
+  --color-tier2: #f59e0b;
+  --color-tier3: #3b82f6;
+  --color-bg: #f4f6f9;
   --color-surface: #ffffff;
-  --color-surface-alt: #f7f7f7;
-  --color-border: #dfe1e2;
-  --color-text: #1b1b1b;
-  --color-text-secondary: #565c65;
+  --color-surface-alt: #f8fafc;
+  --color-border: #e2e8f0;
+  --color-border-light: #f1f5f9;
+  --color-text: #0f172a;
+  --color-text-secondary: #64748b;
   --color-text-inverse: #ffffff;
-  --font-sans: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
-  --font-mono: 'SF Mono', 'Consolas', 'Liberation Mono', 'Menlo', monospace;
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
-  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Consolas', 'Liberation Mono', monospace;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.08), 0 4px 8px rgba(0,0,0,0.04);
+  --shadow-xl: 0 20px 48px rgba(0,0,0,0.1), 0 8px 16px rgba(0,0,0,0.06);
+  --transition-fast: 0.15s cubic-bezier(0.4,0,0.2,1);
+  --transition-med: 0.25s cubic-bezier(0.4,0,0.2,1);
 }
 
 /* ========== RESET & BASE ========== */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 16px; }
+html { font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 body {
   font-family: var(--font-sans);
   background: var(--color-bg);
   color: var(--color-text);
-  line-height: 1.5;
+  line-height: 1.6;
   min-height: 100vh;
 }
 
@@ -50,80 +55,89 @@ body {
 .top-header {
   background: var(--color-primary-dark);
   color: var(--color-text-inverse);
-  padding: 8px 24px;
-  font-size: 12px;
+  padding: 6px 32px;
+  font-size: 11px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  letter-spacing: 0.2px;
 }
-.top-header span { opacity: 0.8; }
+.top-header span { opacity: 0.7; }
 
 .main-header {
-  background: var(--color-primary);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
   color: var(--color-text-inverse);
-  padding: 16px 24px;
+  padding: 14px 32px;
   display: flex;
   align-items: center;
   gap: 16px;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 20px rgba(13,31,60,0.25);
   position: relative;
-  z-index: 10;
+  z-index: 100;
 }
 .main-header h1 {
-  font-size: 22px;
+  font-size: 21px;
   font-weight: 700;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.4px;
 }
 .main-header .subtitle {
-  font-size: 13px;
-  opacity: 0.8;
+  font-size: 12px;
+  opacity: 0.65;
   font-weight: 400;
+  letter-spacing: 0.3px;
 }
 .header-logo {
-  width: 40px; height: 40px;
-  background: rgba(255,255,255,0.15);
-  border-radius: 50%;
+  width: 38px; height: 38px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 20px; font-weight: 700;
+  font-size: 18px; font-weight: 700;
   flex-shrink: 0;
+  backdrop-filter: blur(4px);
 }
 .header-right {
   margin-left: auto;
   display: flex; align-items: center; gap: 16px;
-  font-size: 13px;
+  font-size: 12px;
+  opacity: 0.85;
 }
 .header-right .status-dot {
-  width: 8px; height: 8px; border-radius: 50%;
+  width: 7px; height: 7px; border-radius: 50%;
   background: var(--color-accent);
   display: inline-block;
+  box-shadow: 0 0 8px rgba(16,185,129,0.6);
   animation: pulse-dot 2s ease-in-out infinite;
 }
 @keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(16,185,129,0.6); }
+  50% { opacity: 0.5; box-shadow: 0 0 4px rgba(16,185,129,0.3); }
 }
 
 /* ========== TAB NAVIGATION ========== */
 .tab-nav {
   background: var(--color-surface);
-  border-bottom: 2px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
   display: flex;
-  gap: 0;
-  padding: 0 24px;
+  gap: 2px;
+  padding: 6px 28px 0;
   overflow-x: auto;
+  box-shadow: var(--shadow-xs);
 }
 .tab-btn {
-  padding: 12px 20px;
+  padding: 10px 18px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--color-text-secondary);
   background: none;
   border: none;
-  border-bottom: 3px solid transparent;
+  border-bottom: 2px solid transparent;
   cursor: pointer;
   white-space: nowrap;
-  transition: all 0.15s ease;
+  transition: all var(--transition-fast);
   font-family: var(--font-sans);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  position: relative;
 }
 .tab-btn:hover {
   color: var(--color-primary);
@@ -131,50 +145,56 @@ body {
 }
 .tab-btn.active {
   color: var(--color-primary);
+  font-weight: 600;
   border-bottom-color: var(--color-primary);
+  background: var(--color-surface-alt);
 }
 
 /* ========== MAIN CONTENT ========== */
 .main-content {
-  padding: 24px;
-  max-width: 1400px;
+  padding: 28px 32px;
+  max-width: 1440px;
   margin: 0 auto;
 }
-.tab-panel { display: none; }
+.tab-panel { display: none; animation: fadeIn 0.3s ease; }
 .tab-panel.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
 /* ========== CARD SYSTEM ========== */
 .card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-sm);
-  padding: 20px;
-  margin-bottom: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  transition: box-shadow var(--transition-med);
 }
+.card:hover { box-shadow: var(--shadow-md); }
 .card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--color-border-light);
 }
 .card-title {
   font-size: 16px;
   font-weight: 700;
-  color: var(--color-primary-dark);
+  color: var(--color-text);
+  letter-spacing: -0.2px;
 }
 .card-subtitle {
   font-size: 12px;
   color: var(--color-text-secondary);
-  margin-top: 2px;
+  margin-top: 3px;
 }
 
 /* ========== GRID HELPERS ========== */
-.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
-.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
 .flex-row { display: flex; gap: 16px; align-items: center; }
 .flex-col { display: flex; flex-direction: column; gap: 8px; }
 
@@ -182,35 +202,38 @@ body {
 .stat-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 16px 20px;
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
   box-shadow: var(--shadow-sm);
   position: relative;
   overflow: hidden;
+  transition: all var(--transition-med);
 }
+.stat-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 .stat-card::before {
   content: '';
   position: absolute;
   top: 0; left: 0;
-  width: 4px; height: 100%;
+  width: 100%; height: 3px;
 }
-.stat-card.tier1::before { background: var(--color-tier1); }
-.stat-card.tier2::before { background: var(--color-tier2); }
-.stat-card.tier3::before { background: var(--color-tier3); }
-.stat-card.accent::before { background: var(--color-accent); }
+.stat-card.tier1::before { background: linear-gradient(90deg, var(--color-tier1), #f87171); }
+.stat-card.tier2::before { background: linear-gradient(90deg, var(--color-tier2), #fbbf24); }
+.stat-card.tier3::before { background: linear-gradient(90deg, var(--color-tier3), #60a5fa); }
+.stat-card.accent::before { background: linear-gradient(90deg, var(--color-accent), #34d399); }
 .stat-label {
   font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.8px;
+  letter-spacing: 1px;
   color: var(--color-text-secondary);
   font-weight: 600;
 }
 .stat-value {
-  font-size: 32px;
-  font-weight: 700;
+  font-size: 36px;
+  font-weight: 800;
   color: var(--color-text);
-  line-height: 1.2;
-  margin: 4px 0;
+  line-height: 1.1;
+  margin: 6px 0;
+  letter-spacing: -1px;
 }
 .stat-change {
   font-size: 12px;
@@ -222,199 +245,241 @@ body {
 /* ========== TABLES ========== */
 .data-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 13px;
 }
 .data-table th {
   background: var(--color-surface-alt);
-  padding: 10px 12px;
+  padding: 11px 14px;
   text-align: left;
   font-weight: 600;
   color: var(--color-text-secondary);
   font-size: 11px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-bottom: 2px solid var(--color-border);
+  letter-spacing: 0.6px;
+  border-bottom: 1px solid var(--color-border);
   white-space: nowrap;
 }
+.data-table th:first-child { border-radius: var(--radius-sm) 0 0 0; }
+.data-table th:last-child { border-radius: 0 var(--radius-sm) 0 0; }
 .data-table td {
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--color-border);
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--color-border-light);
   vertical-align: middle;
+  transition: background var(--transition-fast);
 }
-.data-table tbody tr:hover { background: #f5f8ff; }
+.data-table tbody tr { transition: background var(--transition-fast); }
+.data-table tbody tr:hover { background: #f0f5ff; }
+.data-table tbody tr:nth-child(even) { background: var(--color-surface-alt); }
+.data-table tbody tr:nth-child(even):hover { background: #f0f5ff; }
 
 /* ========== BADGES & PILLS ========== */
 .badge {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 20px;
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.3px;
+  letter-spacing: 0.2px;
 }
-.badge-active { background: #d4edda; color: #155724; }
-.badge-inactive { background: #f8d7da; color: #721c24; }
-.badge-pending { background: #fff3cd; color: #856404; }
-.badge-urgent { background: #d54309; color: white; }
-.badge-info { background: #d1ecf1; color: #0c5460; }
-.badge-tier1 { background: #fde8e1; color: var(--color-tier1); }
-.badge-tier2 { background: #fef3cd; color: #856404; }
-.badge-tier3 { background: #dce8f5; color: var(--color-tier3); }
+.badge-active { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+.badge-inactive { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+.badge-pending { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+.badge-urgent { background: var(--color-error); color: white; border: 1px solid var(--color-error); }
+.badge-info { background: #ecfeff; color: #155e75; border: 1px solid #a5f3fc; }
+.badge-tier1 { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+.badge-tier2 { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+.badge-tier3 { background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
 
 /* ========== BUTTONS ========== */
 .btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 6px;
-  padding: 8px 16px;
+  padding: 9px 18px;
   border-radius: var(--radius-sm);
   font-size: 13px;
   font-weight: 600;
   font-family: var(--font-sans);
   cursor: pointer;
   border: 1px solid transparent;
-  transition: all 0.15s ease;
+  transition: all var(--transition-fast);
+  letter-spacing: 0.1px;
 }
+.btn:active { transform: scale(0.97); }
 .btn-primary {
   background: var(--color-primary);
   color: white;
   border-color: var(--color-primary);
+  box-shadow: 0 1px 3px rgba(30,58,95,0.3);
 }
-.btn-primary:hover { background: var(--color-primary-dark); }
+.btn-primary:hover { background: var(--color-primary-light); box-shadow: 0 3px 8px rgba(30,58,95,0.3); }
 .btn-secondary {
   background: white;
   color: var(--color-primary);
-  border-color: var(--color-primary);
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-xs);
 }
-.btn-secondary:hover { background: #f0f4ff; }
+.btn-secondary:hover { background: var(--color-surface-alt); border-color: var(--color-primary-light); }
 .btn-success {
   background: var(--color-accent);
   color: white;
+  box-shadow: 0 1px 3px rgba(16,185,129,0.3);
 }
-.btn-success:hover { background: var(--color-accent-dark); }
+.btn-success:hover { background: var(--color-accent-dark); box-shadow: 0 3px 8px rgba(16,185,129,0.3); }
 .btn-danger {
   background: var(--color-error);
   color: white;
+  box-shadow: 0 1px 3px rgba(239,68,68,0.3);
 }
-.btn-danger:hover { background: #b8360a; }
-.btn-sm { padding: 4px 10px; font-size: 12px; }
-.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-danger:hover { background: #dc2626; box-shadow: 0 3px 8px rgba(239,68,68,0.3); }
+.btn-sm { padding: 5px 12px; font-size: 12px; }
+.btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+/* ========== DEMO MODE BUTTON ========== */
+.btn-demo {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+  box-shadow: 0 2px 8px rgba(99,102,241,0.4);
+  letter-spacing: 0.3px;
+}
+.btn-demo:hover { box-shadow: 0 4px 16px rgba(99,102,241,0.5); transform: translateY(-1px); }
 
 /* ========== EVENT FEED ========== */
 .event-feed {
   max-height: 400px;
   overflow-y: auto;
   font-family: var(--font-mono);
-  font-size: 12px;
-  background: #1b1b1b;
-  color: #e0e0e0;
+  font-size: 11.5px;
+  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+  color: #cbd5e1;
   border-radius: var(--radius-md);
-  padding: 12px;
+  padding: 14px;
+  border: 1px solid #334155;
 }
 .event-feed-item {
-  padding: 4px 0;
-  border-bottom: 1px solid #333;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
   display: flex;
-  gap: 10px;
-  animation: feed-in 0.3s ease;
+  gap: 12px;
+  animation: feed-in 0.35s ease;
 }
 @keyframes feed-in {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
 }
-.event-time { color: #888; white-space: nowrap; }
+.event-time { color: #64748b; white-space: nowrap; }
 .event-type { font-weight: 600; min-width: 180px; }
-.event-type.match { color: #ff6b6b; }
-.event-type.offer { color: #ffd93d; }
-.event-type.waitlist { color: #6bcb77; }
-.event-type.donor { color: #4d96ff; }
-.event-type.transport { color: #9b59b6; }
-.event-type.system { color: #888; }
+.event-type.match { color: #f87171; }
+.event-type.offer { color: #fbbf24; }
+.event-type.waitlist { color: #34d399; }
+.event-type.donor { color: #60a5fa; }
+.event-type.transport { color: #a78bfa; }
+.event-type.system { color: #64748b; }
 
 /* ========== PROGRESS PIPELINE ========== */
 .pipeline {
   display: flex;
-  gap: 0;
+  gap: 2px;
   margin: 16px 0;
 }
 .pipeline-step {
   flex: 1;
   text-align: center;
-  padding: 12px 8px;
-  font-size: 12px;
+  padding: 10px 6px;
+  font-size: 11px;
   font-weight: 600;
   background: var(--color-surface-alt);
   border: 1px solid var(--color-border);
   position: relative;
   color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
 }
 .pipeline-step.completed {
-  background: #d4edda;
-  color: #155724;
-  border-color: #b1dfbb;
+  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+  color: #065f46;
+  border-color: #a7f3d0;
 }
 .pipeline-step.active {
-  background: #cce5ff;
-  color: #004085;
-  border-color: #99caff;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  color: #1e40af;
+  border-color: #93c5fd;
+  box-shadow: 0 0 0 1px #93c5fd;
 }
 .pipeline-step:first-child { border-radius: var(--radius-sm) 0 0 var(--radius-sm); }
 .pipeline-step:last-child { border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
-.pipeline-step-label { font-size: 10px; display: block; margin-top: 2px; font-weight: 400; }
+.pipeline-step-label { font-size: 9px; display: block; margin-top: 2px; font-weight: 400; opacity: 0.7; }
 
 /* ========== OFFER CASCADE ========== */
 .offer-row {
   display: flex;
   align-items: center;
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--color-border);
-  gap: 12px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--color-border-light);
+  gap: 14px;
   font-size: 13px;
+  transition: all var(--transition-fast);
+  border-radius: var(--radius-sm);
+  margin-bottom: 2px;
 }
-.offer-row.accepted { background: #d4edda; }
-.offer-row.declined { background: #fff3cd; }
-.offer-row.pending { background: #e8f0fe; }
-.offer-row.timed-out { background: #f8f8f8; color: #999; }
+.offer-row.accepted { background: #ecfdf5; border-color: #a7f3d0; }
+.offer-row.declined { background: #fffbeb; border-color: #fde68a; }
+.offer-row.pending { background: #eff6ff; border-color: #bfdbfe; box-shadow: 0 0 0 1px #bfdbfe; }
+.offer-row.timed-out { background: var(--color-surface-alt); color: #94a3b8; }
 .offer-rank {
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  background: var(--color-primary);
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light));
   color: white;
   display: flex; align-items: center; justify-content: center;
   font-weight: 700; font-size: 13px;
   flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(30,58,95,0.2);
 }
 
 /* ========== TIMER ========== */
 .countdown-timer {
   font-family: var(--font-mono);
-  font-size: 20px;
+  font-size: 28px;
   font-weight: 700;
   color: var(--color-primary);
   background: var(--color-surface-alt);
-  padding: 8px 16px;
-  border-radius: var(--radius-sm);
+  padding: 10px 24px;
+  border-radius: var(--radius-md);
   display: inline-block;
+  border: 1px solid var(--color-border);
+  letter-spacing: 2px;
 }
-.countdown-timer.urgent { color: var(--color-error); animation: blink 1s step-end infinite; }
+.countdown-timer.urgent { color: var(--color-error); border-color: #fecaca; background: #fef2f2; animation: blink 1s step-end infinite; }
 @keyframes blink { 50% { opacity: 0.5; } }
 
 /* ========== SVG MAP ========== */
 .map-container {
   background: var(--color-surface);
-  border-radius: var(--radius-md);
-  padding: 16px;
+  border-radius: var(--radius-lg);
+  padding: 20px;
   position: relative;
+  border: 1px solid var(--color-border);
 }
 .map-container svg { width: 100%; height: auto; }
 
 /* ========== ARCHITECTURE DIAGRAM ========== */
 .arch-node {
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all var(--transition-fast);
 }
-.arch-node:hover { filter: brightness(1.1); }
+.arch-node:hover { filter: brightness(1.05); transform: translateY(-1px); }
 
 /* ========== SCORE BAR ========== */
 .score-bar-container {
@@ -424,34 +489,34 @@ body {
 }
 .score-bar {
   flex: 1;
-  height: 8px;
+  height: 6px;
   background: var(--color-border);
-  border-radius: 4px;
+  border-radius: 3px;
   overflow: hidden;
 }
 .score-bar-fill {
   height: 100%;
-  border-radius: 4px;
-  transition: width 0.5s ease;
+  border-radius: 3px;
+  transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
 }
-.score-bar-fill.high { background: var(--color-accent); }
-.score-bar-fill.medium { background: var(--color-warning); }
-.score-bar-fill.low { background: var(--color-error); }
+.score-bar-fill.high { background: linear-gradient(90deg, #10b981, #34d399); }
+.score-bar-fill.medium { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.score-bar-fill.low { background: linear-gradient(90deg, #ef4444, #f87171); }
 
 /* ========== AUDIT LOG ========== */
 .audit-log {
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 11.5px;
   background: var(--color-surface-alt);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  padding: 12px;
+  border-radius: var(--radius-md);
+  padding: 14px;
   max-height: 250px;
   overflow-y: auto;
 }
 .audit-entry {
-  padding: 3px 0;
-  border-bottom: 1px solid #eee;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 /* ========== CHART PLACEHOLDER ========== */
@@ -460,27 +525,27 @@ body {
   height: 200px;
   display: flex;
   align-items: flex-end;
-  gap: 4px;
+  gap: 6px;
   padding: 8px 0;
 }
 .chart-bar {
   flex: 1;
-  background: var(--color-primary);
-  border-radius: 3px 3px 0 0;
+  border-radius: 5px 5px 0 0;
   position: relative;
-  transition: height 0.5s ease;
+  transition: height 0.6s cubic-bezier(0.4,0,0.2,1);
   min-width: 20px;
-  opacity: 0.8;
+  opacity: 0.85;
 }
-.chart-bar:hover { opacity: 1; }
+.chart-bar:hover { opacity: 1; transform: scaleY(1.03); transform-origin: bottom; }
 .chart-bar-label {
   position: absolute;
-  bottom: -20px;
+  bottom: -22px;
   left: 50%;
   transform: translateX(-50%);
   font-size: 10px;
   color: var(--color-text-secondary);
   white-space: nowrap;
+  font-weight: 500;
 }
 
 /* ========== MISC ========== */
@@ -488,7 +553,8 @@ body {
   font-size: 18px;
   font-weight: 700;
   margin-bottom: 16px;
-  color: var(--color-primary-dark);
+  color: var(--color-text);
+  letter-spacing: -0.3px;
 }
 .text-muted { color: var(--color-text-secondary); font-size: 13px; }
 .text-mono { font-family: var(--font-mono); }
@@ -498,20 +564,21 @@ body {
 .mb-16 { margin-bottom: 16px; }
 .tag {
   display: inline-block;
-  padding: 1px 6px;
+  padding: 2px 8px;
   background: var(--color-surface-alt);
   border: 1px solid var(--color-border);
-  border-radius: 3px;
+  border-radius: 4px;
   font-size: 11px;
   font-family: var(--font-mono);
+  color: var(--color-text-secondary);
 }
-.separator { border: none; border-top: 1px solid var(--color-border); margin: 16px 0; }
+.separator { border: none; border-top: 1px solid var(--color-border-light); margin: 20px 0; }
 
 /* ========== SCROLLBAR STYLING ========== */
-::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #aaa; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
 /* ========== RESPONSIVE ========== */
 @media (max-width: 900px) {
@@ -527,30 +594,32 @@ body {
   background: var(--color-surface-alt);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  padding: 16px;
+  padding: 18px;
 }
 .detail-row {
   display: flex;
   justify-content: space-between;
-  padding: 6px 0;
-  border-bottom: 1px solid #eee;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-border-light);
   font-size: 13px;
 }
+.detail-row:last-child { border-bottom: none; }
 .detail-label { color: var(--color-text-secondary); font-weight: 500; }
-.detail-value { font-weight: 600; }
+.detail-value { font-weight: 600; color: var(--color-text); }
 
 /* ========== SEARCH ========== */
 .search-input {
-  padding: 8px 12px;
+  padding: 9px 14px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   font-size: 13px;
   font-family: var(--font-sans);
   width: 280px;
   outline: none;
-  transition: border-color 0.15s;
+  transition: all var(--transition-fast);
+  background: var(--color-surface);
 }
-.search-input:focus { border-color: var(--color-primary); box-shadow: 0 0 0 2px rgba(26,68,128,0.15); }
+.search-input:focus { border-color: var(--color-primary-light); box-shadow: 0 0 0 3px rgba(59,111,160,0.12); }
 
 /* ========== TOOLTIP ========== */
 .tooltip-container { position: relative; }
@@ -560,29 +629,148 @@ body {
   bottom: 100%;
   left: 50%;
   transform: translateX(-50%);
-  background: #333;
+  background: var(--color-primary-dark);
   color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
   font-size: 11px;
   white-space: nowrap;
   z-index: 100;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  box-shadow: var(--shadow-md);
 }
 .tooltip-container:hover .tooltip { display: block; }
 
 /* ========== SELECT ========== */
 .select-input {
-  padding: 8px 12px;
+  padding: 9px 14px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   font-size: 13px;
   font-family: var(--font-sans);
-  background: white;
+  background: var(--color-surface);
   outline: none;
   cursor: pointer;
+  transition: all var(--transition-fast);
 }
-.select-input:focus { border-color: var(--color-primary); }
+.select-input:focus { border-color: var(--color-primary-light); box-shadow: 0 0 0 3px rgba(59,111,160,0.12); }
+
+/* ========== DEMO MODE OVERLAY ========== */
+.demo-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.4);
+  z-index: 9998;
+  backdrop-filter: blur(2px);
+  transition: opacity 0.3s ease;
+}
+.demo-overlay.active { display: block; }
+.demo-spotlight {
+  position: absolute;
+  border-radius: var(--radius-md);
+  box-shadow: 0 0 0 9999px rgba(15,23,42,0.45);
+  z-index: 9999;
+  transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
+  pointer-events: none;
+}
+.demo-panel {
+  display: none;
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 380px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  z-index: 10001;
+  overflow: hidden;
+  animation: slideUp 0.35s ease;
+}
+.demo-panel.active { display: block; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.demo-panel-header {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.demo-panel-header h3 { font-size: 14px; font-weight: 700; }
+.demo-panel-body {
+  padding: 20px;
+}
+.demo-step-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 8px;
+}
+.demo-step-desc {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+.demo-progress {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 16px;
+}
+.demo-progress-dot {
+  width: 100%;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--color-border);
+  transition: background 0.3s ease;
+}
+.demo-progress-dot.done { background: #6366f1; }
+.demo-progress-dot.current { background: #8b5cf6; }
+.demo-panel-footer {
+  padding: 12px 20px;
+  border-top: 1px solid var(--color-border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.demo-step-count {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+}
+.demo-nav-btns { display: flex; gap: 8px; }
+.btn-demo-nav {
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  transition: all var(--transition-fast);
+}
+.btn-demo-nav:hover { background: var(--color-surface-alt); }
+.btn-demo-nav.primary {
+  background: #6366f1;
+  color: white;
+  border-color: #6366f1;
+}
+.btn-demo-nav.primary:hover { background: #4f46e5; }
+.btn-demo-exit {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0 4px;
+  font-family: var(--font-sans);
+  transition: color var(--transition-fast);
+}
+.btn-demo-exit:hover { color: white; }
 </style>
 </head>
 <body>
@@ -600,9 +788,10 @@ body {
     <h1>UNet Next <span class="subtitle">Modernized OPTN Data Platform</span></h1>
   </div>
   <div class="header-right">
+    <button class="btn-demo" id="startDemoBtn">Start Guided Demo</button>
     <span><span class="status-dot"></span> All Systems Operational</span>
     <span>|</span>
-    <span>Demo User: Dr. Sarah Chen</span>
+    <span>Dr. Sarah Chen</span>
     <span>|</span>
     <span>Midwest Transplant Center</span>
   </div>
@@ -937,44 +1126,125 @@ body {
         <span class="badge badge-tier2">Tier 2</span>
       </div>
       <div class="map-container">
-        <svg viewBox="0 0 960 600" id="transportMap" style="background:#e8f0fe;border-radius:var(--radius-sm);">
-          <!-- Simplified US outline -->
-          <path d="M120,130 L200,120 L280,115 L340,118 L380,105 L440,100 L500,95 L560,100 L620,90 L680,95 L740,100 L800,110 L830,130 L850,160 L860,200 L850,250 L840,300 L830,340 L800,380 L760,400 L720,420 L700,460 L680,480 L620,490 L560,485 L500,480 L440,470 L400,460 L360,440 L320,420 L280,400 L240,380 L200,350 L170,320 L150,280 L135,240 L120,200 L115,160 Z" fill="#d4e5f7" stroke="#9bb8d8" stroke-width="2"/>
-          <!-- Center dots -->
-          <circle cx="580" cy="220" r="8" fill="#1a4480" stroke="white" stroke-width="2"><title>Chicago, IL</title></circle>
-          <text x="580" y="245" text-anchor="middle" font-size="10" fill="#333">MWTC</text>
-          <circle cx="780" cy="175" r="8" fill="#1a4480" stroke="white" stroke-width="2"><title>Boston, MA</title></circle>
-          <text x="780" y="200" text-anchor="middle" font-size="10" fill="#333">NETC</text>
-          <circle cx="660" cy="370" r="8" fill="#1a4480" stroke="white" stroke-width="2"><title>Atlanta, GA</title></circle>
-          <text x="660" y="395" text-anchor="middle" font-size="10" fill="#333">SETC</text>
-          <circle cx="440" cy="400" r="8" fill="#1a4480" stroke="white" stroke-width="2"><title>Dallas, TX</title></circle>
-          <text x="440" y="425" text-anchor="middle" font-size="10" fill="#333">SWTC</text>
-          <circle cx="150" cy="250" r="8" fill="#1a4480" stroke="white" stroke-width="2"><title>San Francisco, CA</title></circle>
-          <text x="150" y="275" text-anchor="middle" font-size="10" fill="#333">WCTC</text>
-          <!-- Transport lines (animated) -->
-          <line x1="580" y1="220" x2="780" y2="175" stroke="#d54309" stroke-width="2" stroke-dasharray="8,4" class="transport-line">
-            <animate attributeName="stroke-dashoffset" from="24" to="0" dur="1.5s" repeatCount="indefinite"/>
-          </line>
-          <circle r="5" fill="#d54309">
-            <animateMotion dur="3s" repeatCount="indefinite" path="M580,220 L780,175"/>
+        <svg viewBox="0 0 960 600" id="transportMap" style="background:linear-gradient(180deg,#eef3fa 0%,#dce6f2 100%);border-radius:var(--radius-md);">
+          <defs>
+            <filter id="glow"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="4" markerHeight="4" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker>
+          </defs>
+          <!-- US States (simplified polygons for key states) -->
+          <g id="statesGroup" fill="#d5dfe9" stroke="#b8c7d6" stroke-width="0.8" stroke-linejoin="round">
+            <!-- Washington --> <path d="M108,48 L120,45 L158,50 L175,48 L178,55 L180,75 L170,80 L155,82 L120,80 L108,75Z"/>
+            <!-- Oregon --> <path d="M108,75 L120,80 L155,82 L170,80 L180,75 L185,95 L178,115 L165,120 L140,118 L115,110 L105,95Z"/>
+            <!-- California --> <path d="M105,95 L115,110 L140,118 L165,120 L178,115 L175,140 L168,165 L158,195 L145,225 L130,250 L115,260 L108,240 L100,210 L98,180 L100,150 L102,120Z"/>
+            <!-- Nevada --> <path d="M165,120 L178,115 L185,95 L200,100 L210,130 L205,165 L195,200 L175,195 L168,165 L165,140Z"/>
+            <!-- Idaho --> <path d="M180,75 L200,78 L210,85 L215,100 L210,130 L200,100 L185,95Z"/>
+            <!-- Montana --> <path d="M200,48 L270,42 L330,40 L335,50 L330,72 L310,78 L280,80 L240,78 L215,80 L210,70 L200,65Z"/>
+            <!-- Wyoming --> <path d="M240,78 L280,80 L310,78 L330,72 L340,82 L342,110 L305,112 L270,110 L245,108 L240,95Z"/>
+            <!-- Utah --> <path d="M210,130 L245,108 L270,110 L275,140 L268,170 L250,175 L230,172 L215,165 L210,145Z"/>
+            <!-- Colorado --> <path d="M270,110 L305,112 L342,110 L365,112 L370,148 L335,150 L300,148 L275,145 L275,140Z"/>
+            <!-- Arizona --> <path d="M150,225 L168,195 L195,200 L215,202 L225,230 L220,260 L200,275 L175,270 L155,255 L148,240Z"/>
+            <!-- New Mexico --> <path d="M225,230 L250,210 L268,200 L290,198 L315,195 L320,230 L318,265 L300,268 L265,270 L240,268 L230,260Z"/>
+            <!-- North Dakota --> <path d="M335,50 L395,48 L440,45 L442,72 L435,78 L395,80 L355,78 L340,76Z"/>
+            <!-- South Dakota --> <path d="M340,76 L355,78 L395,80 L435,78 L442,72 L448,95 L445,110 L415,112 L375,110 L350,108 L342,95Z"/>
+            <!-- Nebraska --> <path d="M350,108 L375,110 L415,112 L445,110 L460,115 L470,135 L445,140 L410,142 L375,140 L350,138 L345,125Z"/>
+            <!-- Kansas --> <path d="M365,138 L410,142 L445,140 L470,135 L478,155 L475,175 L442,178 L405,175 L375,172 L370,155Z"/>
+            <!-- Oklahoma --> <path d="M368,178 L405,175 L442,178 L475,175 L478,195 L475,210 L450,212 L430,218 L390,215 L370,212 L365,195Z"/>
+            <!-- Texas --> <path d="M315,195 L365,195 L370,212 L390,215 L430,218 L450,212 L475,210 L485,230 L490,260 L480,295 L465,325 L440,350 L415,368 L390,375 L370,365 L355,340 L340,315 L330,290 L320,265 L318,240Z"/>
+            <!-- Minnesota --> <path d="M448,45 L500,42 L530,40 L535,55 L540,80 L535,95 L520,100 L500,102 L480,100 L460,95 L452,80Z"/>
+            <!-- Iowa --> <path d="M460,100 L500,102 L530,100 L548,105 L555,125 L545,140 L520,142 L490,140 L470,138 L465,120Z"/>
+            <!-- Missouri --> <path d="M478,148 L520,145 L545,142 L560,148 L570,170 L565,195 L548,200 L525,198 L502,195 L488,192 L480,175Z"/>
+            <!-- Arkansas --> <path d="M488,200 L525,198 L548,200 L558,210 L560,238 L545,242 L520,240 L498,238 L490,225Z"/>
+            <!-- Louisiana --> <path d="M490,245 L520,242 L545,245 L560,242 L570,260 L575,285 L565,300 L545,310 L520,308 L500,300 L490,280 L488,260Z"/>
+            <!-- Wisconsin --> <path d="M530,48 L560,45 L585,50 L595,65 L600,85 L595,100 L580,105 L555,102 L540,98 L535,80 L530,60Z"/>
+            <!-- Michigan --> <path d="M595,48 L630,45 L650,50 L660,65 L665,85 L655,100 L640,102 L625,100 L610,95 L602,80 L595,65Z"/>
+            <!-- Illinois --> <path d="M555,105 L580,105 L595,108 L600,130 L605,155 L600,180 L590,195 L575,200 L560,198 L555,175 L550,148 L548,125Z"/>
+            <!-- Indiana --> <path d="M600,108 L625,105 L635,110 L640,135 L638,165 L632,190 L620,195 L605,192 L598,170 L596,140Z"/>
+            <!-- Ohio --> <path d="M635,100 L660,95 L685,98 L700,105 L705,130 L700,160 L690,180 L670,185 L650,182 L640,170 L638,145 L636,120Z"/>
+            <!-- Kentucky --> <path d="M590,195 L620,192 L650,188 L680,185 L700,190 L720,195 L715,212 L700,220 L675,218 L645,215 L615,212 L595,210Z"/>
+            <!-- Tennessee --> <path d="M590,215 L625,212 L660,218 L700,220 L730,222 L740,235 L728,242 L700,240 L660,238 L620,236 L590,235Z"/>
+            <!-- Mississippi --> <path d="M560,242 L590,238 L600,260 L605,285 L600,310 L585,318 L570,315 L565,295Z"/>
+            <!-- Alabama --> <path d="M595,238 L625,236 L640,240 L648,265 L645,295 L635,315 L618,318 L605,310 L600,285 L595,260Z"/>
+            <!-- Georgia --> <path d="M640,238 L670,235 L695,238 L710,250 L715,278 L708,308 L695,320 L675,318 L655,310 L648,290 L645,265Z"/>
+            <!-- Florida --> <path d="M650,320 L680,318 L700,320 L718,315 L735,325 L750,350 L755,380 L748,405 L730,420 L710,425 L695,415 L688,395 L685,370 L678,348 L665,335Z"/>
+            <!-- South Carolina --> <path d="M700,238 L725,232 L745,238 L755,258 L748,275 L730,280 L710,278 L700,265Z"/>
+            <!-- North Carolina --> <path d="M690,215 L720,210 L750,208 L780,215 L800,225 L795,240 L775,245 L750,240 L725,235 L700,238Z"/>
+            <!-- Virginia --> <path d="M695,190 L725,185 L760,188 L790,195 L810,205 L800,218 L780,215 L755,210 L725,210 L700,212Z"/>
+            <!-- West Virginia --> <path d="M700,170 L720,168 L735,175 L730,190 L720,198 L705,195 L695,185 L698,175Z"/>
+            <!-- Pennsylvania --> <path d="M705,118 L740,112 L775,108 L800,112 L805,130 L798,148 L780,152 L750,150 L720,148 L708,140Z"/>
+            <!-- New York --> <path d="M740,78 L775,72 L810,70 L835,80 L845,95 L838,115 L820,120 L800,112 L775,108 L745,110 L738,95Z"/>
+            <!-- Vermont --> <path d="M815,58 L825,55 L832,65 L835,80 L828,85 L818,80Z"/>
+            <!-- New Hampshire --> <path d="M828,50 L838,48 L842,60 L840,72 L835,78 L828,70 L825,58Z"/>
+            <!-- Maine --> <path d="M838,25 L855,22 L868,30 L872,48 L865,62 L855,68 L845,60 L840,45Z"/>
+            <!-- Massachusetts --> <path d="M838,92 L860,88 L878,90 L880,98 L868,102 L848,100 L838,98Z"/>
+            <!-- Connecticut --> <path d="M838,102 L855,100 L862,105 L858,112 L845,115 L838,110Z"/>
+            <!-- Rhode Island --> <path d="M862,95 L872,94 L874,102 L868,106 L862,102Z"/>
+            <!-- New Jersey --> <path d="M802,125 L815,120 L822,130 L820,148 L812,158 L802,152 L800,138Z"/>
+            <!-- Delaware --> <path d="M808,155 L818,152 L822,162 L818,172 L810,168Z"/>
+            <!-- Maryland --> <path d="M760,158 L790,155 L808,158 L815,168 L810,178 L795,182 L770,180 L758,172Z"/>
+          </g>
+          <!-- OPTN Region shading (subtle) -->
+          <g opacity="0.15">
+            <rect x="100" y="45" width="90" height="220" rx="4" fill="#3b82f6"/>
+            <rect x="200" y="40" width="170" height="140" rx="4" fill="#8b5cf6"/>
+            <rect x="335" y="40" width="130" height="140" rx="4" fill="#f59e0b"/>
+            <rect x="530" y="40" width="140" height="170" rx="4" fill="#10b981"/>
+            <rect x="690" y="65" width="190" height="150" rx="4" fill="#ef4444"/>
+          </g>
+          <!-- Transport routes (curved arcs) -->
+          <path d="M580,218 Q680,160 778,173" stroke="#ef4444" stroke-width="2.5" fill="none" stroke-dasharray="6,3" opacity="0.8">
+            <animate attributeName="stroke-dashoffset" from="18" to="0" dur="1s" repeatCount="indefinite"/>
+          </path>
+          <circle r="6" fill="#ef4444" filter="url(#glow)">
+            <animateMotion dur="2.5s" repeatCount="indefinite" path="M580,218 Q680,160 778,173"/>
           </circle>
-          <line x1="660" y1="370" x2="580" y2="220" stroke="#e5a000" stroke-width="2" stroke-dasharray="8,4">
-            <animate attributeName="stroke-dashoffset" from="24" to="0" dur="1.5s" repeatCount="indefinite"/>
-          </line>
-          <circle r="5" fill="#e5a000">
-            <animateMotion dur="3s" repeatCount="indefinite" path="M660,370 L580,220"/>
+          <path d="M658,368 Q620,280 580,218" stroke="#f59e0b" stroke-width="2.5" fill="none" stroke-dasharray="6,3" opacity="0.8">
+            <animate attributeName="stroke-dashoffset" from="18" to="0" dur="1s" repeatCount="indefinite"/>
+          </path>
+          <circle r="6" fill="#f59e0b" filter="url(#glow)">
+            <animateMotion dur="2.5s" repeatCount="indefinite" path="M658,368 Q620,280 580,218"/>
           </circle>
-          <line x1="780" y1="175" x2="440" y2="400" stroke="#00a91c" stroke-width="2" stroke-dasharray="8,4">
-            <animate attributeName="stroke-dashoffset" from="24" to="0" dur="1.5s" repeatCount="indefinite"/>
-          </line>
-          <circle r="5" fill="#00a91c">
-            <animateMotion dur="3s" repeatCount="indefinite" path="M780,175 L440,400"/>
+          <path d="M778,173 Q620,240 440,398" stroke="#10b981" stroke-width="2.5" fill="none" stroke-dasharray="6,3" opacity="0.8">
+            <animate attributeName="stroke-dashoffset" from="18" to="0" dur="1.2s" repeatCount="indefinite"/>
+          </path>
+          <circle r="6" fill="#10b981" filter="url(#glow)">
+            <animateMotion dur="3s" repeatCount="indefinite" path="M778,173 Q620,240 440,398"/>
           </circle>
+          <!-- Transplant center pins -->
+          <g>
+            <!-- Chicago -->
+            <circle cx="580" cy="218" r="12" fill="#1e3a5f" stroke="white" stroke-width="2.5" filter="url(#glow)"/>
+            <circle cx="580" cy="218" r="5" fill="white"/>
+            <text x="580" y="240" text-anchor="middle" font-size="10" font-weight="700" fill="#1e3a5f">Chicago</text>
+            <text x="580" y="251" text-anchor="middle" font-size="8" fill="#64748b">MWTC</text>
+            <!-- Boston -->
+            <circle cx="778" cy="173" r="12" fill="#1e3a5f" stroke="white" stroke-width="2.5" filter="url(#glow)"/>
+            <circle cx="778" cy="173" r="5" fill="white"/>
+            <text x="778" y="195" text-anchor="middle" font-size="10" font-weight="700" fill="#1e3a5f">Boston</text>
+            <text x="778" y="206" text-anchor="middle" font-size="8" fill="#64748b">NETC</text>
+            <!-- Atlanta -->
+            <circle cx="658" cy="368" r="12" fill="#1e3a5f" stroke="white" stroke-width="2.5" filter="url(#glow)"/>
+            <circle cx="658" cy="368" r="5" fill="white"/>
+            <text x="658" y="390" text-anchor="middle" font-size="10" font-weight="700" fill="#1e3a5f">Atlanta</text>
+            <text x="658" y="401" text-anchor="middle" font-size="8" fill="#64748b">SETC</text>
+            <!-- Dallas -->
+            <circle cx="440" cy="398" r="12" fill="#1e3a5f" stroke="white" stroke-width="2.5" filter="url(#glow)"/>
+            <circle cx="440" cy="398" r="5" fill="white"/>
+            <text x="440" y="420" text-anchor="middle" font-size="10" font-weight="700" fill="#1e3a5f">Dallas</text>
+            <text x="440" y="431" text-anchor="middle" font-size="8" fill="#64748b">SWTC</text>
+            <!-- San Francisco -->
+            <circle cx="118" cy="200" r="12" fill="#1e3a5f" stroke="white" stroke-width="2.5" filter="url(#glow)"/>
+            <circle cx="118" cy="200" r="5" fill="white"/>
+            <text x="118" y="222" text-anchor="middle" font-size="10" font-weight="700" fill="#1e3a5f">San Francisco</text>
+            <text x="118" y="233" text-anchor="middle" font-size="8" fill="#64748b">WCTC</text>
+          </g>
           <!-- Legend -->
-          <rect x="20" y="520" width="200" height="65" rx="4" fill="white" stroke="#ccc"/>
-          <circle cx="35" cy="540" r="4" fill="#d54309"/><text x="45" y="544" font-size="10" fill="#333">Kidney — Charter Flight</text>
-          <circle cx="35" cy="558" r="4" fill="#e5a000"/><text x="45" y="562" font-size="10" fill="#333">Heart — Charter Flight</text>
-          <circle cx="35" cy="576" r="4" fill="#00a91c"/><text x="45" y="580" font-size="10" fill="#333">Liver — Ground Courier</text>
+          <g transform="translate(20,510)">
+            <rect width="260" height="75" rx="8" fill="white" stroke="#e2e8f0" filter="url(#glow)" opacity="0.95"/>
+            <text x="12" y="18" font-size="10" font-weight="700" fill="#334155">Active Transports</text>
+            <circle cx="18" cy="32" r="5" fill="#ef4444"/><text x="28" y="36" font-size="10" fill="#475569">Kidney (L) — Charter Flight</text>
+            <circle cx="18" cy="48" r="5" fill="#f59e0b"/><text x="28" y="52" font-size="10" fill="#475569">Heart — Charter Flight</text>
+            <circle cx="18" cy="64" r="5" fill="#10b981"/><text x="28" y="68" font-size="10" fill="#475569">Liver — Ground Courier</text>
+          </g>
         </svg>
       </div>
     </div>
@@ -1243,6 +1513,27 @@ body {
     </div>
   </div>
 
+</div>
+
+<!-- Demo Mode Overlay -->
+<div class="demo-overlay" id="demoOverlay"></div>
+<div class="demo-panel" id="demoPanel">
+  <div class="demo-panel-header">
+    <h3>Guided Demo</h3>
+    <button class="btn-demo-exit" id="demoExitBtn" title="Exit demo">&times;</button>
+  </div>
+  <div class="demo-panel-body">
+    <div class="demo-progress" id="demoProgress"></div>
+    <div class="demo-step-title" id="demoStepTitle"></div>
+    <div class="demo-step-desc" id="demoStepDesc"></div>
+  </div>
+  <div class="demo-panel-footer">
+    <span class="demo-step-count" id="demoStepCount">Step 1 of 18</span>
+    <div class="demo-nav-btns">
+      <button class="btn-demo-nav" id="demoPrevBtn">Back</button>
+      <button class="btn-demo-nav primary" id="demoNextBtn">Next</button>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -2090,6 +2381,237 @@ function showArchDetail(svc) {
 }
 
 initArchitecture();
+
+// ========== GUIDED DEMO MODE ==========
+const DEMO_STEPS = [
+  {
+    tab: 'dashboard',
+    title: 'Welcome to UNet Next',
+    desc: 'This interactive demo showcases UNet Next — a modernized, cloud-native platform designed to replace the legacy UNOS UNet system. It manages the entire U.S. organ transplant ecosystem: matching, offers, waitlists, donors, transport, and analytics.',
+    highlight: '.main-header'
+  },
+  {
+    tab: 'dashboard',
+    title: 'Real-Time Operations Dashboard',
+    desc: 'The dashboard provides a live operational overview. These stat cards show active waiting list candidates, donors in process, organs currently in transit, and transplants performed today — all updating in real time.',
+    highlight: '#dashStats'
+  },
+  {
+    tab: 'dashboard',
+    title: 'Live Event Stream',
+    desc: 'Every action in the system generates a domain event on the Apache Kafka backbone. This feed shows events streaming in real time — candidate registrations, match runs, organ offers, transport updates, and system health checks.',
+    highlight: '#eventFeed'
+  },
+  {
+    tab: 'matching',
+    title: 'Organ Matching Engine',
+    desc: 'The Tier 1 Matching & Allocation Service is the heart of the platform. It executes organ-to-candidate matching algorithms using configurable policy rules. Select a donor and organ, then click "Run Match" to see it in action.',
+    highlight: '#tab-matching .card'
+  },
+  {
+    tab: 'matching',
+    title: 'Running a Match',
+    desc: 'Watch as the engine evaluates active candidates, computes scores (MELD, KDPI, EPTS, CAS, CPRA), and produces a rank-ordered list. Match runs complete in under 60 seconds. Every run generates an immutable audit record in Amazon QLDB.',
+    highlight: '#runMatchBtn',
+    action: () => {
+      document.getElementById('matchDonorSelect').value = 'DNR-001';
+      document.getElementById('matchDonorSelect').dispatchEvent(new Event('change'));
+      setTimeout(() => {
+        document.getElementById('matchOrganSelect').value = 'Kidney (L)';
+        document.getElementById('matchOrganSelect').dispatchEvent(new Event('change'));
+        setTimeout(() => document.getElementById('runMatchBtn').click(), 400);
+      }, 400);
+    }
+  },
+  {
+    tab: 'matching',
+    title: 'AOOS Detection',
+    desc: 'The system automatically detects Allocation Out of Sequence (AOOS) events — when an organ goes to someone other than the highest-ranked candidate. This triggers an alert and requires structured justification for MPSC review.',
+    highlight: '#aoosAlert',
+    action: () => {
+      document.getElementById('aoosToggle').checked = true;
+      setTimeout(() => document.getElementById('runMatchBtn').click(), 300);
+    }
+  },
+  {
+    tab: 'offers',
+    title: 'Organ Offer Workflow',
+    desc: 'When a match completes, the Offer Service walks down the ranked list presenting offers to transplant centers. Each center gets a configurable acceptance window (shown by the countdown timer). The offer auto-advances on timeout or decline.',
+    highlight: '#tab-offers .card'
+  },
+  {
+    tab: 'offers',
+    title: 'Offer Cascade & AI Prediction',
+    desc: 'The offer cascade shows every center contacted, their response, and timing. An AI acceptance prediction (powered by Amazon Bedrock/SageMaker) estimates the probability each center will accept, helping OPOs optimize placement strategy.',
+    highlight: '#offerCascade'
+  },
+  {
+    tab: 'waitlist',
+    title: 'National Waiting List',
+    desc: 'The Waitlist Service maintains a single, authoritative national waiting list synchronized in real time. You can search, filter by organ type or status, and sort by any column. Click any candidate to view their full clinical history.',
+    highlight: '#waitlistTable'
+  },
+  {
+    tab: 'waitlist',
+    title: 'Candidate Detail View',
+    desc: 'Each candidate record shows demographics, clinical scores, CPRA, wait time, and a complete status history. Data flows in automatically from hospital EHRs via FHIR APIs, reducing manual entry burden.',
+    highlight: '#waitlistTable',
+    action: () => {
+      const firstRow = document.querySelector('#waitlistTableBody tr');
+      if (firstRow) firstRow.click();
+    }
+  },
+  {
+    tab: 'donors',
+    title: 'Donor Management Pipeline',
+    desc: 'The Donor Management Service tracks every donor through 6 stages: Hospital Referral, OPO Evaluation, Family Authorization, Donor Management, Organ Recovery, and Disposition. Each card shows the pipeline progress and KDPI score.',
+    highlight: '#donorCards'
+  },
+  {
+    tab: 'donors',
+    title: 'Donor Clinical Profile',
+    desc: 'Click any donor card to see full clinical details — age, blood type, BMI, cause of death, OPO, and organ-specific quality scores. Amazon Bedrock assists with extracting structured data from uploaded clinical documents.',
+    action: () => {
+      const card = document.querySelector('#donorCards .card');
+      if (card) card.click();
+    }
+  },
+  {
+    tab: 'transport',
+    title: 'Real-Time Organ Transport',
+    desc: 'The Transport & Logistics Service provides end-to-end organ tracking with GPS telemetry. The map shows active transports between centers with animated routes. Cold ischemia timers tick in real time — color-coded green, yellow, or red.',
+    highlight: '.map-container'
+  },
+  {
+    tab: 'transport',
+    title: 'Transport Monitoring Table',
+    desc: 'Each transport shows tracking ID, organ type, origin/destination, method (charter, commercial, ground), and live cold ischemia time. Organ check-in at the receiving center verifies identity match via barcode scan.',
+    highlight: '#transportTableBody'
+  },
+  {
+    tab: 'analytics',
+    title: 'AI-Powered Analytics',
+    desc: 'Amazon Bedrock and SageMaker power advisory AI features. The acceptance prediction model estimates how likely each center is to accept an offer based on historical patterns. All AI features are human-in-the-loop — advisory only.',
+    highlight: '#predictionResult',
+    action: () => document.getElementById('runPredictionBtn').click()
+  },
+  {
+    tab: 'analytics',
+    title: 'Policy Simulation Sandbox',
+    desc: 'Policy analysts can simulate allocation policy changes before deployment. Adjust the geographic proximity weight slider to see how it would shift organ distribution between local and national allocation — all computed against 12 months of historical data.',
+    highlight: '#policySlider',
+    action: () => {
+      const slider = document.getElementById('policySlider');
+      slider.value = 75;
+      slider.dispatchEvent(new Event('input'));
+    }
+  },
+  {
+    tab: 'architecture',
+    title: 'System Architecture',
+    desc: 'UNet Next is decomposed into 12 domain services across 3 tiers — all deployed on AWS GovCloud. Services communicate through the Kafka event backbone (animated dots). Click any service to view its AWS components, SLA, and event topics.',
+    highlight: '#archDiagram'
+  },
+  {
+    tab: 'architecture',
+    title: 'Service Deep Dive',
+    desc: 'Each service is independently deployable, owns its data store, and exposes versioned APIs. The architecture supports 99.99% uptime for life-critical services, zero-downtime deployments, and multi-region disaster recovery.',
+    action: () => {
+      const node = document.querySelector('[data-service="matching"]');
+      if (node) node.dispatchEvent(new Event('click'));
+    }
+  }
+];
+
+const DemoMode = {
+  active: false,
+  step: 0,
+
+  start() {
+    this.active = true;
+    this.step = 0;
+    document.getElementById('demoOverlay').classList.add('active');
+    document.getElementById('demoPanel').classList.add('active');
+    document.getElementById('startDemoBtn').textContent = 'Demo Running...';
+    document.getElementById('startDemoBtn').style.opacity = '0.6';
+    this.render();
+  },
+
+  stop() {
+    this.active = false;
+    document.getElementById('demoOverlay').classList.remove('active');
+    document.getElementById('demoPanel').classList.remove('active');
+    document.getElementById('startDemoBtn').textContent = 'Start Guided Demo';
+    document.getElementById('startDemoBtn').style.opacity = '1';
+  },
+
+  next() {
+    if (this.step < DEMO_STEPS.length - 1) { this.step++; this.render(); }
+    else { this.stop(); }
+  },
+
+  prev() {
+    if (this.step > 0) { this.step--; this.render(); }
+  },
+
+  render() {
+    const s = DEMO_STEPS[this.step];
+
+    // Switch tab
+    if (s.tab) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      const btn = document.querySelector(`.tab-btn[data-tab="${s.tab}"]`);
+      if (btn) btn.classList.add('active');
+      document.getElementById('tab-' + s.tab).classList.add('active');
+    }
+
+    // Execute action
+    if (s.action) setTimeout(() => s.action(), 500);
+
+    // Update panel content
+    document.getElementById('demoStepTitle').textContent = s.title;
+    document.getElementById('demoStepDesc').textContent = s.desc;
+    document.getElementById('demoStepCount').textContent = `Step ${this.step + 1} of ${DEMO_STEPS.length}`;
+
+    // Progress dots
+    const prog = document.getElementById('demoProgress');
+    prog.innerHTML = '';
+    DEMO_STEPS.forEach((_, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'demo-progress-dot' + (i < this.step ? ' done' : i === this.step ? ' current' : '');
+      prog.appendChild(dot);
+    });
+
+    // Prev button state
+    document.getElementById('demoPrevBtn').style.visibility = this.step === 0 ? 'hidden' : 'visible';
+    document.getElementById('demoNextBtn').textContent = this.step === DEMO_STEPS.length - 1 ? 'Finish' : 'Next';
+
+    // Scroll highlight into view
+    if (s.highlight) {
+      setTimeout(() => {
+        const el = document.querySelector(s.highlight);
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
+    }
+  }
+};
+
+document.getElementById('startDemoBtn').addEventListener('click', () => {
+  if (DemoMode.active) DemoMode.stop(); else DemoMode.start();
+});
+document.getElementById('demoExitBtn').addEventListener('click', () => DemoMode.stop());
+document.getElementById('demoNextBtn').addEventListener('click', () => DemoMode.next());
+document.getElementById('demoPrevBtn').addEventListener('click', () => DemoMode.prev());
+document.getElementById('demoOverlay').addEventListener('click', () => DemoMode.stop());
+
+// Keyboard navigation for demo
+document.addEventListener('keydown', (e) => {
+  if (!DemoMode.active) return;
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); DemoMode.next(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); DemoMode.prev(); }
+  if (e.key === 'Escape') DemoMode.stop();
+});
 </script>
 
 </body>
