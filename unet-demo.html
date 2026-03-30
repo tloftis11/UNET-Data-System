@@ -625,42 +625,622 @@ body {
 
   <!-- DASHBOARD TAB -->
   <div class="tab-panel active" id="tab-dashboard">
-    <p class="text-muted">Loading...</p>
+    <div class="grid-4 mb-16" id="dashStats">
+      <div class="stat-card tier1">
+        <div class="stat-label">Active Candidates</div>
+        <div class="stat-value" id="statCandidates">0</div>
+        <div class="stat-change">+12 this week</div>
+      </div>
+      <div class="stat-card tier2">
+        <div class="stat-label">Donors In Process</div>
+        <div class="stat-value" id="statDonors">0</div>
+        <div class="stat-change">3 in recovery</div>
+      </div>
+      <div class="stat-card accent">
+        <div class="stat-label">Organs In Transit</div>
+        <div class="stat-value" id="statTransit">0</div>
+        <div class="stat-change">Avg ischemia: 3h 12m</div>
+      </div>
+      <div class="stat-card tier3">
+        <div class="stat-label">Transplants Today</div>
+        <div class="stat-value" id="statTransplants">0</div>
+        <div class="stat-change">+8% vs last week</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Transplants by Organ Type</div>
+              <div class="card-subtitle">Last 30 days</div>
+            </div>
+          </div>
+          <div class="chart-area" id="organChart" style="height:180px; align-items:flex-end; padding-bottom:28px;">
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">System Health</div>
+              <div class="card-subtitle">All services operational</div>
+            </div>
+            <span class="badge badge-active">Healthy</span>
+          </div>
+          <div class="detail-panel">
+            <div class="detail-row"><span class="detail-label">Matching Engine (Tier 1)</span><span class="detail-value" style="color:var(--color-accent);">99.99% &mdash; 42ms p99</span></div>
+            <div class="detail-row"><span class="detail-label">Offer Service (Tier 1)</span><span class="detail-value" style="color:var(--color-accent);">99.99% &mdash; 1.2s delivery</span></div>
+            <div class="detail-row"><span class="detail-label">Waitlist Service (Tier 1)</span><span class="detail-value" style="color:var(--color-accent);">99.99% &mdash; 85ms p95</span></div>
+            <div class="detail-row"><span class="detail-label">Donor Management (Tier 2)</span><span class="detail-value" style="color:var(--color-accent);">99.97% &mdash; 120ms p95</span></div>
+            <div class="detail-row"><span class="detail-label">Transport Service (Tier 2)</span><span class="detail-value" style="color:var(--color-accent);">99.96% &mdash; 95ms p95</span></div>
+            <div class="detail-row"><span class="detail-label">Event Backbone (MSK)</span><span class="detail-value" style="color:var(--color-accent);">99.99% &mdash; 12ms e2e</span></div>
+            <div class="detail-row"><span class="detail-label">FHIR API Gateway</span><span class="detail-value" style="color:var(--color-accent);">99.95% &mdash; 210ms p95</span></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="card" style="height:100%;">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Live Event Feed</div>
+              <div class="card-subtitle">Real-time domain events from Kafka backbone</div>
+            </div>
+            <span class="badge badge-info" id="eventCount">0 events</span>
+          </div>
+          <div class="event-feed" id="eventFeed"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- MATCHING TAB -->
   <div class="tab-panel" id="tab-matching">
-    <p class="text-muted">Loading...</p>
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Organ Matching &amp; Allocation Engine</div>
+          <div class="card-subtitle">Select a donor and organ to run a simulated match against the national waitlist</div>
+        </div>
+        <span class="badge badge-tier1">Tier 1 &mdash; Life-Critical</span>
+      </div>
+      <div class="flex-row mb-16" style="flex-wrap:wrap;gap:12px;">
+        <div>
+          <label class="text-muted" style="font-size:11px;display:block;margin-bottom:4px;">Donor</label>
+          <select class="select-input" id="matchDonorSelect">
+            <option value="">— Select donor —</option>
+          </select>
+        </div>
+        <div>
+          <label class="text-muted" style="font-size:11px;display:block;margin-bottom:4px;">Organ</label>
+          <select class="select-input" id="matchOrganSelect">
+            <option value="">— Select organ —</option>
+          </select>
+        </div>
+        <div style="display:flex;align-items:flex-end;">
+          <button class="btn btn-primary" id="runMatchBtn" disabled>Run Match</button>
+        </div>
+        <div style="display:flex;align-items:flex-end;gap:8px;">
+          <label style="font-size:13px;display:flex;align-items:center;gap:6px;cursor:pointer;">
+            <input type="checkbox" id="aoosToggle"> Simulate AOOS
+          </label>
+        </div>
+      </div>
+      <div id="matchStatus" class="text-muted mb-16" style="font-size:13px;"></div>
+      <div id="aoosAlert" style="display:none;background:#fde8e1;border:1px solid #d54309;border-radius:var(--radius-sm);padding:12px 16px;margin-bottom:16px;">
+        <strong style="color:#d54309;">⚠ AOOS DETECTED — Allocation Out of Sequence</strong>
+        <p style="font-size:13px;margin-top:4px;color:#333;">Organ allocated to rank #3 instead of rank #1. Structured justification required. Event routed to MPSC for review. <span class="tag">FR-AOOS-001</span></p>
+      </div>
+      <div id="matchResults" style="display:none;">
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:8px;">Rank-Ordered Candidate List</h3>
+        <div style="overflow-x:auto;">
+          <table class="data-table" id="matchTable">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Candidate</th>
+                <th>Age</th>
+                <th>Blood Type</th>
+                <th>Score</th>
+                <th>CPRA</th>
+                <th>Wait Time</th>
+                <th>Center</th>
+                <th>Compatibility</th>
+              </tr>
+            </thead>
+            <tbody id="matchTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="card" id="matchAuditCard" style="display:none;">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Immutable Audit Record</div>
+          <div class="card-subtitle">Stored in Amazon QLDB — cryptographically verifiable</div>
+        </div>
+        <span class="tag">QLDB</span>
+      </div>
+      <div class="audit-log" id="matchAuditLog"></div>
+    </div>
   </div>
 
   <!-- OFFERS TAB -->
   <div class="tab-panel" id="tab-offers">
-    <p class="text-muted">Loading...</p>
+    <div class="grid-2">
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Active Organ Offer</div>
+              <div class="card-subtitle">Match Run MR-87432 &mdash; Kidney (L) from DNR-001</div>
+            </div>
+            <span class="badge badge-urgent">ACTIVE</span>
+          </div>
+          <div class="detail-panel mb-16">
+            <div class="detail-row"><span class="detail-label">Organ</span><span class="detail-value">Kidney (L)</span></div>
+            <div class="detail-row"><span class="detail-label">Donor</span><span class="detail-value">DNR-001 — Age 34, O+, KDPI 18%</span></div>
+            <div class="detail-row"><span class="detail-label">Current Offer To</span><span class="detail-value" id="offerCurrentCenter">Northeast Medical Center (Rank #1)</span></div>
+            <div class="detail-row"><span class="detail-label">Cold Ischemia</span><span class="detail-value" id="offerIschemia">2h 14m</span></div>
+            <div class="detail-row">
+              <span class="detail-label">AI Acceptance Prediction</span>
+              <span class="detail-value">
+                <div class="score-bar-container">
+                  <div class="score-bar" style="width:120px;"><div class="score-bar-fill high" style="width:73%" id="offerPredBar"></div></div>
+                  <span id="offerPredPct">73%</span>
+                </div>
+              </span>
+            </div>
+          </div>
+          <div style="text-align:center;margin-bottom:16px;">
+            <div class="text-muted" style="font-size:11px;margin-bottom:4px;">Time Remaining</div>
+            <div class="countdown-timer" id="offerTimer">59:59</div>
+          </div>
+          <div class="flex-row" style="justify-content:center;gap:12px;">
+            <button class="btn btn-success" id="offerAcceptBtn">Accept Offer</button>
+            <button class="btn btn-danger" id="offerDeclineBtn">Decline Offer</button>
+          </div>
+          <div id="declineReasonDiv" style="display:none;margin-top:12px;">
+            <label class="text-muted" style="font-size:11px;display:block;margin-bottom:4px;">Decline Reason (required)</label>
+            <select class="select-input" id="declineReasonSelect" style="width:100%;">
+              <option value="">— Select reason —</option>
+              <option>Size mismatch</option>
+              <option>Donor quality concerns</option>
+              <option>Patient too ill for surgery</option>
+              <option>No surgical team available</option>
+              <option>Patient refused organ</option>
+              <option>Positive crossmatch anticipated</option>
+              <option>Organ ischemia time too long</option>
+              <option>Other (specify)</option>
+            </select>
+            <button class="btn btn-danger btn-sm mt-8" id="confirmDeclineBtn">Confirm Decline</button>
+          </div>
+          <div id="offerOutcome" style="display:none;margin-top:16px;padding:12px;border-radius:var(--radius-sm);text-align:center;font-weight:600;"></div>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Offer Cascade</div>
+              <div class="card-subtitle">Full offer chain for Kidney (L) — DNR-001</div>
+            </div>
+          </div>
+          <div id="offerCascade"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- WAITLIST TAB -->
   <div class="tab-panel" id="tab-waitlist">
-    <p class="text-muted">Loading...</p>
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">National Waiting List</div>
+          <div class="card-subtitle">Real-time synchronized across all access points &mdash; <span id="waitlistTotal">0</span> candidates shown</div>
+        </div>
+        <span class="badge badge-tier1">Tier 1</span>
+      </div>
+      <div class="flex-row mb-16" style="flex-wrap:wrap;gap:12px;">
+        <input type="text" class="search-input" id="waitlistSearch" placeholder="Search by name or ID...">
+        <select class="select-input" id="waitlistOrganFilter">
+          <option value="">All Organs</option>
+          <option>Kidney</option>
+          <option>Liver</option>
+          <option>Heart</option>
+          <option>Lung</option>
+        </select>
+        <select class="select-input" id="waitlistStatusFilter">
+          <option value="">All Statuses</option>
+          <option>Active</option>
+          <option>Inactive</option>
+          <option>Temporarily Inactive</option>
+        </select>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table" id="waitlistTable">
+          <thead>
+            <tr>
+              <th style="cursor:pointer;" data-sort="id">ID ↕</th>
+              <th style="cursor:pointer;" data-sort="name">Name ↕</th>
+              <th style="cursor:pointer;" data-sort="age">Age ↕</th>
+              <th>Blood</th>
+              <th style="cursor:pointer;" data-sort="organ">Organ ↕</th>
+              <th style="cursor:pointer;" data-sort="score">Score ↕</th>
+              <th style="cursor:pointer;" data-sort="waitDays">Wait Time ↕</th>
+              <th>Status</th>
+              <th>Center</th>
+            </tr>
+          </thead>
+          <tbody id="waitlistTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card" id="waitlistDetail" style="display:none;">
+      <div class="card-header">
+        <div>
+          <div class="card-title" id="waitlistDetailTitle">Candidate Detail</div>
+          <div class="card-subtitle">Complete history and clinical data</div>
+        </div>
+        <button class="btn btn-secondary btn-sm" id="closeWaitlistDetail">Close</button>
+      </div>
+      <div class="grid-2">
+        <div class="detail-panel" id="waitlistDetailInfo"></div>
+        <div>
+          <h4 style="font-size:13px;font-weight:700;margin-bottom:8px;">Status History</h4>
+          <div class="audit-log" id="waitlistDetailHistory"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- DONORS TAB -->
   <div class="tab-panel" id="tab-donors">
-    <p class="text-muted">Loading...</p>
+    <div class="card mb-16">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Donor Management</div>
+          <div class="card-subtitle">Referral-to-procurement pipeline &mdash; all active donors</div>
+        </div>
+        <span class="badge badge-tier2">Tier 2</span>
+      </div>
+      <div class="text-muted mb-16" style="font-size:12px;">Pipeline stages: Hospital Referral → OPO Evaluation → Family Authorization → Donor Management → Organ Recovery → Disposition</div>
+      <div class="grid-2" id="donorCards"></div>
+    </div>
+    <div class="card" id="donorDetail" style="display:none;">
+      <div class="card-header">
+        <div>
+          <div class="card-title" id="donorDetailTitle">Donor Detail</div>
+          <div class="card-subtitle">Full clinical profile and organ inventory</div>
+        </div>
+        <button class="btn btn-secondary btn-sm" id="closeDonorDetail">Close</button>
+      </div>
+      <div class="grid-2">
+        <div class="detail-panel" id="donorDetailInfo"></div>
+        <div>
+          <h4 style="font-size:13px;font-weight:700;margin-bottom:8px;">Organs Available</h4>
+          <div id="donorDetailOrgans"></div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- TRANSPORT TAB -->
   <div class="tab-panel" id="tab-transport">
-    <p class="text-muted">Loading...</p>
+    <div class="card mb-16">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Organ Transport &amp; Logistics</div>
+          <div class="card-subtitle">Real-time GPS tracking and cold ischemia monitoring</div>
+        </div>
+        <span class="badge badge-tier2">Tier 2</span>
+      </div>
+      <div class="map-container">
+        <svg viewBox="0 0 960 600" id="transportMap" style="background:#e8f0fe;border-radius:var(--radius-sm);">
+          <!-- Simplified US outline -->
+          <path d="M120,130 L200,120 L280,115 L340,118 L380,105 L440,100 L500,95 L560,100 L620,90 L680,95 L740,100 L800,110 L830,130 L850,160 L860,200 L850,250 L840,300 L830,340 L800,380 L760,400 L720,420 L700,460 L680,480 L620,490 L560,485 L500,480 L440,470 L400,460 L360,440 L320,420 L280,400 L240,380 L200,350 L170,320 L150,280 L135,240 L120,200 L115,160 Z" fill="#d4e5f7" stroke="#9bb8d8" stroke-width="2"/>
+          <!-- Center dots -->
+          <circle cx="580" cy="220" r="8" fill="#1a4480" stroke="white" stroke-width="2"><title>Chicago, IL</title></circle>
+          <text x="580" y="245" text-anchor="middle" font-size="10" fill="#333">MWTC</text>
+          <circle cx="780" cy="175" r="8" fill="#1a4480" stroke="white" stroke-width="2"><title>Boston, MA</title></circle>
+          <text x="780" y="200" text-anchor="middle" font-size="10" fill="#333">NETC</text>
+          <circle cx="660" cy="370" r="8" fill="#1a4480" stroke="white" stroke-width="2"><title>Atlanta, GA</title></circle>
+          <text x="660" y="395" text-anchor="middle" font-size="10" fill="#333">SETC</text>
+          <circle cx="440" cy="400" r="8" fill="#1a4480" stroke="white" stroke-width="2"><title>Dallas, TX</title></circle>
+          <text x="440" y="425" text-anchor="middle" font-size="10" fill="#333">SWTC</text>
+          <circle cx="150" cy="250" r="8" fill="#1a4480" stroke="white" stroke-width="2"><title>San Francisco, CA</title></circle>
+          <text x="150" y="275" text-anchor="middle" font-size="10" fill="#333">WCTC</text>
+          <!-- Transport lines (animated) -->
+          <line x1="580" y1="220" x2="780" y2="175" stroke="#d54309" stroke-width="2" stroke-dasharray="8,4" class="transport-line">
+            <animate attributeName="stroke-dashoffset" from="24" to="0" dur="1.5s" repeatCount="indefinite"/>
+          </line>
+          <circle r="5" fill="#d54309">
+            <animateMotion dur="3s" repeatCount="indefinite" path="M580,220 L780,175"/>
+          </circle>
+          <line x1="660" y1="370" x2="580" y2="220" stroke="#e5a000" stroke-width="2" stroke-dasharray="8,4">
+            <animate attributeName="stroke-dashoffset" from="24" to="0" dur="1.5s" repeatCount="indefinite"/>
+          </line>
+          <circle r="5" fill="#e5a000">
+            <animateMotion dur="3s" repeatCount="indefinite" path="M660,370 L580,220"/>
+          </circle>
+          <line x1="780" y1="175" x2="440" y2="400" stroke="#00a91c" stroke-width="2" stroke-dasharray="8,4">
+            <animate attributeName="stroke-dashoffset" from="24" to="0" dur="1.5s" repeatCount="indefinite"/>
+          </line>
+          <circle r="5" fill="#00a91c">
+            <animateMotion dur="3s" repeatCount="indefinite" path="M780,175 L440,400"/>
+          </circle>
+          <!-- Legend -->
+          <rect x="20" y="520" width="200" height="65" rx="4" fill="white" stroke="#ccc"/>
+          <circle cx="35" cy="540" r="4" fill="#d54309"/><text x="45" y="544" font-size="10" fill="#333">Kidney — Charter Flight</text>
+          <circle cx="35" cy="558" r="4" fill="#e5a000"/><text x="45" y="562" font-size="10" fill="#333">Heart — Charter Flight</text>
+          <circle cx="35" cy="576" r="4" fill="#00a91c"/><text x="45" y="580" font-size="10" fill="#333">Liver — Ground Courier</text>
+        </svg>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-title">Active Transports</div>
+          <div class="card-subtitle">Cold ischemia timers update in real time</div>
+        </div>
+      </div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Tracking ID</th>
+              <th>Organ</th>
+              <th>Donor</th>
+              <th>From</th>
+              <th>To</th>
+              <th>Method</th>
+              <th>Status</th>
+              <th>Cold Ischemia</th>
+            </tr>
+          </thead>
+          <tbody id="transportTableBody"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <!-- ANALYTICS TAB -->
   <div class="tab-panel" id="tab-analytics">
-    <p class="text-muted">Loading...</p>
+    <div class="grid-2 mb-16">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Organ Acceptance Prediction</div>
+            <div class="card-subtitle">Amazon Bedrock + SageMaker &mdash; Advisory only</div>
+          </div>
+          <span class="tag">AI/ML</span>
+        </div>
+        <div class="flex-row mb-16" style="flex-wrap:wrap;gap:12px;">
+          <div>
+            <label class="text-muted" style="font-size:11px;display:block;margin-bottom:4px;">Organ Type</label>
+            <select class="select-input" id="predOrganType">
+              <option>Kidney</option><option>Liver</option><option>Heart</option><option>Lung</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-muted" style="font-size:11px;display:block;margin-bottom:4px;">Donor KDPI</label>
+            <select class="select-input" id="predKdpi">
+              <option value="low">Low (&lt;20%)</option>
+              <option value="med" selected>Medium (20-60%)</option>
+              <option value="high">High (&gt;60%)</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:flex-end;">
+            <button class="btn btn-primary btn-sm" id="runPredictionBtn">Predict</button>
+          </div>
+        </div>
+        <div id="predictionResult" style="display:none;">
+          <div class="text-muted mb-8" style="font-size:11px;">Predicted acceptance probability by center rank:</div>
+          <div id="predictionBars"></div>
+          <div class="text-muted mt-8" style="font-size:11px;font-style:italic;">Model: optn-acceptance-v3.2 | Retrained: Mar 2026 | Advisory — not for clinical decisions</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Wait Time Estimation</div>
+            <div class="card-subtitle">Projected wait time by organ type and blood type</div>
+          </div>
+          <span class="tag">AI/ML</span>
+        </div>
+        <div class="flex-row mb-16" style="flex-wrap:wrap;gap:12px;">
+          <div>
+            <label class="text-muted" style="font-size:11px;display:block;margin-bottom:4px;">Organ</label>
+            <select class="select-input" id="waitEstOrgan">
+              <option>Kidney</option><option>Liver</option><option>Heart</option><option>Lung</option>
+            </select>
+          </div>
+          <div>
+            <label class="text-muted" style="font-size:11px;display:block;margin-bottom:4px;">Blood Type</label>
+            <select class="select-input" id="waitEstBlood">
+              <option>O+</option><option>O-</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:flex-end;">
+            <button class="btn btn-primary btn-sm" id="runWaitEstBtn">Estimate</button>
+          </div>
+        </div>
+        <div id="waitEstResult" style="display:none;">
+          <div style="text-align:center;padding:16px;">
+            <div class="text-muted" style="font-size:11px;">Estimated Median Wait Time</div>
+            <div style="font-size:36px;font-weight:700;color:var(--color-primary);" id="waitEstValue">—</div>
+            <div class="text-muted" style="font-size:12px;" id="waitEstRange">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Policy Simulation</div>
+            <div class="card-subtitle">Adjust allocation weight and see projected impact</div>
+          </div>
+          <span class="tag">Sandbox</span>
+        </div>
+        <div class="mb-16">
+          <label class="text-muted" style="font-size:12px;display:block;margin-bottom:8px;">
+            Geographic proximity weight: <strong id="policySliderVal">50%</strong>
+          </label>
+          <input type="range" min="0" max="100" value="50" id="policySlider" style="width:100%;">
+        </div>
+        <div class="flex-row mb-8" style="justify-content:space-between;">
+          <span class="text-muted" style="font-size:11px;">Current Policy</span>
+          <span class="text-muted" style="font-size:11px;">Simulated Policy</span>
+        </div>
+        <div class="grid-2" style="gap:8px;">
+          <div id="policyChartBefore" class="chart-area" style="height:140px;padding-bottom:24px;"></div>
+          <div id="policyChartAfter" class="chart-area" style="height:140px;padding-bottom:24px;"></div>
+        </div>
+        <div class="text-muted mt-8" style="font-size:11px;">Simulated on 12 months historical match data (de-identified)</div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Compliance Anomaly Detection</div>
+            <div class="card-subtitle">AI-flagged patterns for MPSC review</div>
+          </div>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr><th>Member</th><th>Anomaly</th><th>Severity</th><th>Flagged</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Southeast Transplant Institute</td><td>Offer response time 3.2x above avg</td><td><span class="badge badge-urgent">High</span></td><td>2 days ago</td></tr>
+            <tr><td>Southwest Transplant Hospital</td><td>AOOS rate 8.4% (nat'l avg 2.1%)</td><td><span class="badge badge-urgent">High</span></td><td>5 days ago</td></tr>
+            <tr><td>Great Lakes Medical</td><td>Follow-up form delinquency 23%</td><td><span class="badge badge-pending">Medium</span></td><td>1 week ago</td></tr>
+            <tr><td>Rocky Mountain Transplant</td><td>Kidney non-utilization rate elevated</td><td><span class="badge badge-pending">Medium</span></td><td>1 week ago</td></tr>
+            <tr><td>OPO-SE1 (LifeLink)</td><td>Referral conversion drop 15% MoM</td><td><span class="badge badge-info">Low</span></td><td>2 weeks ago</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <!-- ARCHITECTURE TAB -->
   <div class="tab-panel" id="tab-architecture">
-    <p class="text-muted">Loading...</p>
+    <div class="card mb-16">
+      <div class="card-header">
+        <div>
+          <div class="card-title">UNet Next — System Architecture</div>
+          <div class="card-subtitle">12 domain services, 3 tiers, event-driven microservices on AWS GovCloud. Click a service to view details.</div>
+        </div>
+      </div>
+      <svg viewBox="0 0 1000 620" id="archDiagram" style="width:100%;height:auto;font-family:var(--font-sans);">
+        <!-- Background -->
+        <rect width="1000" height="620" rx="8" fill="#f7f9fc"/>
+
+        <!-- Tier labels -->
+        <text x="20" y="30" font-size="11" font-weight="700" fill="#d54309">TIER 1 — Life-Critical (99.99%)</text>
+        <text x="20" y="210" font-size="11" font-weight="700" fill="#b8860b">TIER 2 — Mission-Critical (99.95%)</text>
+        <text x="20" y="390" font-size="11" font-weight="700" fill="#1a4480">TIER 3 — Operational (99.9%)</text>
+
+        <!-- Tier 1 services -->
+        <rect x="30" y="45" width="280" height="65" rx="6" fill="#fde8e1" stroke="#d54309" stroke-width="2" class="arch-node" data-service="matching" style="cursor:pointer;"/>
+        <text x="170" y="72" text-anchor="middle" font-size="13" font-weight="700" fill="#333">Matching &amp; Allocation</text>
+        <text x="170" y="92" text-anchor="middle" font-size="10" fill="#666">EKS + Aurora + Redis + QLDB</text>
+
+        <rect x="360" y="45" width="280" height="65" rx="6" fill="#fde8e1" stroke="#d54309" stroke-width="2" class="arch-node" data-service="offers" style="cursor:pointer;"/>
+        <text x="500" y="72" text-anchor="middle" font-size="13" font-weight="700" fill="#333">Organ Offer Service</text>
+        <text x="500" y="92" text-anchor="middle" font-size="10" fill="#666">EKS + Step Functions + SNS</text>
+
+        <rect x="690" y="45" width="280" height="65" rx="6" fill="#fde8e1" stroke="#d54309" stroke-width="2" class="arch-node" data-service="waitlist" style="cursor:pointer;"/>
+        <text x="830" y="72" text-anchor="middle" font-size="13" font-weight="700" fill="#333">Waitlist Service</text>
+        <text x="830" y="92" text-anchor="middle" font-size="10" fill="#666">EKS + Aurora + Redis + FHIR</text>
+
+        <!-- Tier 2 services -->
+        <rect x="30" y="225" width="220" height="65" rx="6" fill="#fef3cd" stroke="#b8860b" stroke-width="2" class="arch-node" data-service="donor" style="cursor:pointer;"/>
+        <text x="140" y="252" text-anchor="middle" font-size="13" font-weight="700" fill="#333">Donor Management</text>
+        <text x="140" y="272" text-anchor="middle" font-size="10" fill="#666">EKS + Aurora + S3</text>
+
+        <rect x="270" y="225" width="220" height="65" rx="6" fill="#fef3cd" stroke="#b8860b" stroke-width="2" class="arch-node" data-service="transport" style="cursor:pointer;"/>
+        <text x="380" y="252" text-anchor="middle" font-size="13" font-weight="700" fill="#333">Transport &amp; Logistics</text>
+        <text x="380" y="272" text-anchor="middle" font-size="10" fill="#666">EKS + DynamoDB + IoT Core</text>
+
+        <rect x="510" y="225" width="220" height="65" rx="6" fill="#fef3cd" stroke="#b8860b" stroke-width="2" class="arch-node" data-service="datacollection" style="cursor:pointer;"/>
+        <text x="620" y="252" text-anchor="middle" font-size="13" font-weight="700" fill="#333">Data Collection</text>
+        <text x="620" y="272" text-anchor="middle" font-size="10" fill="#666">EKS + Aurora + Lambda</text>
+
+        <rect x="750" y="225" width="220" height="65" rx="6" fill="#fef3cd" stroke="#b8860b" stroke-width="2" class="arch-node" data-service="outcomes" style="cursor:pointer;"/>
+        <text x="860" y="252" text-anchor="middle" font-size="13" font-weight="700" fill="#333">Transplant &amp; Outcomes</text>
+        <text x="860" y="272" text-anchor="middle" font-size="10" fill="#666">EKS + Aurora + Batch</text>
+
+        <!-- Tier 3 services -->
+        <rect x="30" y="405" width="220" height="65" rx="6" fill="#dce8f5" stroke="#1a4480" stroke-width="2" class="arch-node" data-service="compliance" style="cursor:pointer;"/>
+        <text x="140" y="432" text-anchor="middle" font-size="13" font-weight="700" fill="#333">Compliance &amp; Member</text>
+        <text x="140" y="452" text-anchor="middle" font-size="10" fill="#666">EKS + Aurora + Step Functions</text>
+
+        <rect x="270" y="405" width="220" height="65" rx="6" fill="#dce8f5" stroke="#1a4480" stroke-width="2" class="arch-node" data-service="publicdata" style="cursor:pointer;"/>
+        <text x="380" y="432" text-anchor="middle" font-size="13" font-weight="700" fill="#333">Public Data Portal</text>
+        <text x="380" y="452" text-anchor="middle" font-size="10" fill="#666">CloudFront + S3 + API GW</text>
+
+        <rect x="510" y="405" width="220" height="65" rx="6" fill="#dce8f5" stroke="#1a4480" stroke-width="2" class="arch-node" data-service="notifications" style="cursor:pointer;"/>
+        <text x="620" y="432" text-anchor="middle" font-size="13" font-weight="700" fill="#333">Notification Service</text>
+        <text x="620" y="452" text-anchor="middle" font-size="10" fill="#666">EKS + SNS + SES + Pinpoint</text>
+
+        <rect x="750" y="405" width="220" height="65" rx="6" fill="#dce8f5" stroke="#1a4480" stroke-width="2" class="arch-node" data-service="patient" style="cursor:pointer;"/>
+        <text x="860" y="432" text-anchor="middle" font-size="13" font-weight="700" fill="#333">Patient Portal</text>
+        <text x="860" y="452" text-anchor="middle" font-size="10" fill="#666">CloudFront + Cognito + Lambda</text>
+
+        <!-- Event Backbone -->
+        <rect x="30" y="510" width="940" height="45" rx="6" fill="#1a4480" stroke="#0f2d52" stroke-width="2"/>
+        <text x="500" y="537" text-anchor="middle" font-size="14" font-weight="700" fill="white">Amazon MSK (Kafka) — Event Backbone</text>
+
+        <!-- Connection lines (services to backbone) -->
+        <line x1="170" y1="110" x2="170" y2="510" stroke="#ddd" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="500" y1="110" x2="500" y2="510" stroke="#ddd" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="830" y1="110" x2="830" y2="510" stroke="#ddd" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="140" y1="290" x2="140" y2="510" stroke="#ddd" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="380" y1="290" x2="380" y2="510" stroke="#ddd" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="620" y1="290" x2="620" y2="510" stroke="#ddd" stroke-width="1" stroke-dasharray="4,3"/>
+        <line x1="860" y1="290" x2="860" y2="510" stroke="#ddd" stroke-width="1" stroke-dasharray="4,3"/>
+
+        <!-- Animated event dots -->
+        <circle r="4" fill="#d54309" opacity="0.8">
+          <animateMotion dur="2.5s" repeatCount="indefinite" path="M170,110 L170,510"/>
+        </circle>
+        <circle r="4" fill="#e5a000" opacity="0.8">
+          <animateMotion dur="3s" repeatCount="indefinite" path="M500,110 L500,510"/>
+        </circle>
+        <circle r="4" fill="#1a4480" opacity="0.8">
+          <animateMotion dur="2s" repeatCount="indefinite" path="M830,510 L830,110"/>
+        </circle>
+        <circle r="3" fill="#00a91c" opacity="0.8">
+          <animateMotion dur="3.5s" repeatCount="indefinite" path="M380,290 L380,510"/>
+        </circle>
+        <circle r="3" fill="#9b59b6" opacity="0.8">
+          <animateMotion dur="2.8s" repeatCount="indefinite" path="M620,510 L620,290"/>
+        </circle>
+
+        <!-- AI/ML block -->
+        <rect x="30" y="575" width="300" height="35" rx="4" fill="#e8f0fe" stroke="#4d96ff" stroke-width="1"/>
+        <text x="180" y="597" text-anchor="middle" font-size="11" font-weight="600" fill="#333">Amazon Bedrock — AI/ML Layer</text>
+
+        <!-- Shared Platform block -->
+        <rect x="360" y="575" width="300" height="35" rx="4" fill="#e8f0fe" stroke="#4d96ff" stroke-width="1"/>
+        <text x="510" y="597" text-anchor="middle" font-size="11" font-weight="600" fill="#333">IAM + API Gateway + FHIR + Observability</text>
+
+        <!-- Data block -->
+        <rect x="690" y="575" width="280" height="35" rx="4" fill="#e8f0fe" stroke="#4d96ff" stroke-width="1"/>
+        <text x="830" y="597" text-anchor="middle" font-size="11" font-weight="600" fill="#333">S3 Data Lake + Redshift + Athena</text>
+      </svg>
+    </div>
+    <div class="card" id="archDetail" style="display:none;">
+      <div class="card-header">
+        <div>
+          <div class="card-title" id="archDetailTitle">Service Detail</div>
+          <div class="card-subtitle" id="archDetailSubtitle"></div>
+        </div>
+        <button class="btn btn-secondary btn-sm" id="closeArchDetail">Close</button>
+      </div>
+      <div class="grid-3" id="archDetailContent"></div>
+    </div>
   </div>
 
 </div>
@@ -789,6 +1369,727 @@ function formatMinutes(m) {
   const mins = m % 60;
   return h > 0 ? `${h}h ${mins}m` : `${mins}m`;
 }
+
+// ========== DASHBOARD INIT ==========
+function initDashboard() {
+  // Animate stat counters
+  const activeCandidates = CANDIDATES.filter(c => c.status === 'Active').length;
+  const donorsInProcess = DONORS.filter(d => d.stageIdx < 5).length;
+  const inTransit = TRANSPORTS.filter(t => t.status === 'In Transit').length;
+  animateCounter('statCandidates', activeCandidates);
+  animateCounter('statDonors', donorsInProcess);
+  animateCounter('statTransit', inTransit);
+  animateCounter('statTransplants', 14);
+
+  // Organ chart
+  const chartData = [
+    { label: 'Kidney', value: 186, color: '#1a4480' },
+    { label: 'Liver', value: 124, color: '#2e6db4' },
+    { label: 'Heart', value: 78, color: '#d54309' },
+    { label: 'Lung', value: 62, color: '#e5a000' },
+    { label: 'Pancreas', value: 18, color: '#00a91c' },
+    { label: 'Intestine', value: 6, color: '#9b59b6' }
+  ];
+  const chart = document.getElementById('organChart');
+  const maxVal = Math.max(...chartData.map(d => d.value));
+  chart.innerHTML = '';
+  chartData.forEach(d => {
+    const pct = (d.value / maxVal) * 100;
+    chart.innerHTML += `<div class="chart-bar" style="height:${pct}%;background:${d.color};" title="${d.label}: ${d.value}"><span class="chart-bar-label">${d.label}</span></div>`;
+  });
+
+  // Start live event feed
+  startEventFeed();
+}
+
+function animateCounter(id, target) {
+  const el = document.getElementById(id);
+  let current = 0;
+  const step = Math.max(1, Math.floor(target / 30));
+  const interval = setInterval(() => {
+    current += step;
+    if (current >= target) { current = target; clearInterval(interval); }
+    el.textContent = current.toLocaleString();
+  }, 30);
+}
+
+// ========== LIVE EVENT FEED ==========
+const EVENT_TEMPLATES = [
+  { type: 'waitlist', label: 'candidate-registered', msg: () => `New ${randomFrom(ORGAN_TYPES).toLowerCase()} candidate ${randomFrom(FIRST_NAMES)} ${randomFrom(LAST_NAMES)} registered at ${randomFrom(CENTERS).name}` },
+  { type: 'waitlist', label: 'score-recalculated', msg: () => `MELD score updated to ${randomInt(12,38)} for candidate ${generateId()}` },
+  { type: 'match', label: 'match-run-completed', msg: () => `Match run MR-${randomInt(80000,99999)} completed for ${randomFrom(ORGAN_TYPES)} — ${randomInt(20,180)} candidates evaluated in ${randomFloat(8,55,1)}s` },
+  { type: 'offer', label: 'organ-offered', msg: () => `${randomFrom(ORGAN_TYPES)} offered to ${randomFrom(CENTERS).name} (rank #${randomInt(1,12)})` },
+  { type: 'offer', label: 'organ-accepted', msg: () => `${randomFrom(ORGAN_TYPES)} ACCEPTED by ${randomFrom(CENTERS).name} — scheduling transport` },
+  { type: 'offer', label: 'organ-declined', msg: () => `${randomFrom(ORGAN_TYPES)} declined by ${randomFrom(CENTERS).name} — reason: ${randomFrom(['Size mismatch','Patient too ill','Donor quality','No surgical team','Patient refused'])}` },
+  { type: 'donor', label: 'donor-registered', msg: () => `New donor ${DONORS[randomInt(0,7)].id} registered by ${randomFrom(OPOS).name}` },
+  { type: 'donor', label: 'organ-recovered', msg: () => `${randomFrom(['Kidney (L)','Kidney (R)','Liver','Heart'])} recovered from donor DNR-${randomInt(100,999)}` },
+  { type: 'transport', label: 'organ-in-transit', msg: () => `${randomFrom(['Kidney','Liver','Heart','Lung'])} departed ${randomFrom(CENTERS).city} via ${randomFrom(['Charter Flight','Ground Courier','Commercial Flight'])}` },
+  { type: 'transport', label: 'organ-arrived', msg: () => `${randomFrom(['Kidney','Liver'])} arrived at ${randomFrom(CENTERS).city} — cold ischemia ${randomInt(2,8)}h ${randomInt(0,59)}m` },
+  { type: 'system', label: 'health-check', msg: () => `All Tier 1 services healthy — matching engine p99 latency ${randomInt(25,65)}ms` }
+];
+
+let eventCounter = 0;
+function addEventToFeed(template) {
+  const feed = document.getElementById('eventFeed');
+  if (!feed) return;
+  const t = template || randomFrom(EVENT_TEMPLATES);
+  const item = document.createElement('div');
+  item.className = 'event-feed-item';
+  item.innerHTML = `<span class="event-time">${formatTime()}</span><span class="event-type ${t.type}">${t.label}</span><span>${t.msg()}</span>`;
+  feed.insertBefore(item, feed.firstChild);
+  if (feed.children.length > 100) feed.removeChild(feed.lastChild);
+  eventCounter++;
+  const countEl = document.getElementById('eventCount');
+  if (countEl) countEl.textContent = eventCounter + ' events';
+  EventBus.emit('optn.' + t.type + '.' + t.label, { message: t.msg() });
+}
+
+function startEventFeed() {
+  // Initial burst
+  for (let i = 0; i < 8; i++) setTimeout(() => addEventToFeed(), i * 200);
+  // Then periodic
+  setInterval(() => addEventToFeed(), randomInt(2000, 4000));
+}
+
+initDashboard();
+
+// ========== MATCHING & ALLOCATION ==========
+function initMatching() {
+  const donorSel = document.getElementById('matchDonorSelect');
+  const organSel = document.getElementById('matchOrganSelect');
+  const runBtn = document.getElementById('runMatchBtn');
+
+  DONORS.forEach(d => {
+    donorSel.innerHTML += `<option value="${d.id}">${d.id} — Age ${d.age}, ${d.bloodType}, ${d.opo.name} (KDPI: ${d.kdpi}%)</option>`;
+  });
+
+  donorSel.addEventListener('change', () => {
+    organSel.innerHTML = '<option value="">— Select organ —</option>';
+    const donor = DONORS.find(d => d.id === donorSel.value);
+    if (donor) {
+      donor.organs.forEach(o => { organSel.innerHTML += `<option value="${o}">${o}</option>`; });
+    }
+    runBtn.disabled = true;
+  });
+  organSel.addEventListener('change', () => { runBtn.disabled = !organSel.value; });
+
+  runBtn.addEventListener('click', runMatchSimulation);
+}
+
+function runMatchSimulation() {
+  const donorId = document.getElementById('matchDonorSelect').value;
+  const organName = document.getElementById('matchOrganSelect').value;
+  const donor = DONORS.find(d => d.id === donorId);
+  if (!donor || !organName) return;
+
+  const statusEl = document.getElementById('matchStatus');
+  const resultsEl = document.getElementById('matchResults');
+  const auditCard = document.getElementById('matchAuditCard');
+  const aoosAlert = document.getElementById('aoosAlert');
+  const btn = document.getElementById('runMatchBtn');
+  const isAoos = document.getElementById('aoosToggle').checked;
+
+  btn.disabled = true;
+  resultsEl.style.display = 'none';
+  auditCard.style.display = 'none';
+  aoosAlert.style.display = 'none';
+
+  // Determine organ type
+  let organType = 'Kidney';
+  if (organName.includes('Liver')) organType = 'Liver';
+  else if (organName.includes('Heart')) organType = 'Heart';
+  else if (organName.includes('Lung')) organType = 'Lung';
+
+  // Simulate loading
+  const matchId = 'MR-' + randomInt(80000, 99999);
+  const policyVersion = 'OPTN-2026.1.3';
+  const startTime = Date.now();
+  statusEl.innerHTML = `<span style="color:var(--color-primary);">Initiating match run ${matchId} for ${organName} from ${donor.id}...</span>`;
+
+  setTimeout(() => {
+    statusEl.innerHTML = `<span style="color:var(--color-primary);">Evaluating ${CANDIDATES.filter(c=>c.organ===organType && c.status==='Active').length} active ${organType.toLowerCase()} candidates against policy ${policyVersion}...</span>`;
+  }, 600);
+
+  setTimeout(() => {
+    statusEl.innerHTML = `<span style="color:var(--color-primary);">Computing scores (${organType === 'Kidney' ? 'EPTS/CPRA/KDPI' : organType === 'Liver' ? 'MELD/PELD' : organType === 'Heart' ? 'Heart Status' : 'Lung CAS'})...</span>`;
+  }, 1200);
+
+  setTimeout(() => {
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+    const candidates = CANDIDATES.filter(c => c.organ === organType && c.status === 'Active')
+      .map(c => ({
+        ...c,
+        compatibility: randomInt(40, 99),
+        finalScore: organType === 'Kidney' ? randomFloat(10, 98, 1) : organType === 'Liver' ? randomInt(6, 40) : c.score
+      }))
+      .sort((a, b) => b.compatibility - a.compatibility)
+      .slice(0, 15)
+      .map((c, i) => ({ ...c, rank: i + 1 }));
+
+    const tbody = document.getElementById('matchTableBody');
+    tbody.innerHTML = '';
+    candidates.forEach(c => {
+      const compClass = c.compatibility > 80 ? 'high' : c.compatibility > 60 ? 'medium' : 'low';
+      const highlight = isAoos && c.rank === 3 ? ' style="background:#fff3cd;"' : c.rank === 1 ? ' style="background:#e8f5e9;"' : '';
+      tbody.innerHTML += `<tr${highlight}>
+        <td><strong>${c.rank}</strong></td>
+        <td>${c.firstName} ${c.lastName} <span class="tag">${c.id}</span></td>
+        <td>${c.age}</td>
+        <td>${c.bloodType}</td>
+        <td><strong>${c.finalScore}</strong> <span class="text-muted">${c.scoreName}</span></td>
+        <td>${c.cpra !== null ? c.cpra + '%' : '—'}</td>
+        <td>${Math.floor(c.waitDays / 365)}y ${c.waitDays % 365}d</td>
+        <td>${c.center.id}</td>
+        <td><div class="score-bar-container"><div class="score-bar"><div class="score-bar-fill ${compClass}" style="width:${c.compatibility}%"></div></div><span style="font-size:12px;min-width:32px;">${c.compatibility}%</span></div></td>
+      </tr>`;
+    });
+
+    resultsEl.style.display = 'block';
+    statusEl.innerHTML = `<span style="color:var(--color-accent-dark);">✓ Match run ${matchId} completed — ${candidates.length} candidates ranked in ${elapsed}s (policy: ${policyVersion})</span>`;
+
+    if (isAoos) aoosAlert.style.display = 'block';
+
+    // Audit log
+    auditCard.style.display = 'block';
+    const auditLog = document.getElementById('matchAuditLog');
+    const now = new Date();
+    auditLog.innerHTML = `<div class="audit-entry"><strong>Match Run ID:</strong> ${matchId}</div>
+<div class="audit-entry"><strong>Timestamp:</strong> ${now.toISOString()}</div>
+<div class="audit-entry"><strong>Donor:</strong> ${donor.id} | Age ${donor.age} | ${donor.bloodType} | KDPI ${donor.kdpi}%</div>
+<div class="audit-entry"><strong>Organ:</strong> ${organName}</div>
+<div class="audit-entry"><strong>Policy Version:</strong> ${policyVersion}</div>
+<div class="audit-entry"><strong>Candidates Evaluated:</strong> ${candidates.length}</div>
+<div class="audit-entry"><strong>Execution Time:</strong> ${elapsed}s</div>
+<div class="audit-entry"><strong>Top Candidate:</strong> ${candidates[0].id} — ${candidates[0].firstName} ${candidates[0].lastName} (compatibility: ${candidates[0].compatibility}%)</div>
+${isAoos ? '<div class="audit-entry" style="color:#d54309;"><strong>AOOS FLAG:</strong> Allocation to rank #3 — justification pending</div>' : ''}
+<div class="audit-entry"><strong>Hash:</strong> sha256:${Array.from({length:64},()=>'0123456789abcdef'[Math.floor(Math.random()*16)]).join('')}</div>
+<div class="audit-entry"><strong>QLDB Document ID:</strong> ${Array.from({length:22},()=>'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'[Math.floor(Math.random()*62)]).join('')}</div>
+<div class="audit-entry" style="color:var(--color-text-secondary);">Record immutable — stored in Amazon QLDB with cryptographic verification</div>`;
+
+    btn.disabled = false;
+    EventBus.emit('optn.matching.match-run-completed', { matchId, donor: donor.id, organ: organName });
+  }, 1800);
+}
+
+initMatching();
+
+// ========== ORGAN OFFERS ==========
+const OFFER_CASCADE_DATA = [
+  { rank: 1, center: CENTERS[1], status: 'pending', time: null, reason: null },
+  { rank: 2, center: CENTERS[0], status: 'waiting', time: null, reason: null },
+  { rank: 3, center: CENTERS[2], status: 'waiting', time: null, reason: null },
+  { rank: 4, center: CENTERS[3], status: 'waiting', time: null, reason: null },
+  { rank: 5, center: CENTERS[4], status: 'waiting', time: null, reason: null },
+  { rank: 6, center: { id: 'NWTC', name: 'Northwest Transplant Center', city: 'Seattle, WA' }, status: 'waiting', time: null, reason: null },
+  { rank: 7, center: { id: 'RMTC', name: 'Rocky Mountain Transplant', city: 'Denver, CO' }, status: 'waiting', time: null, reason: null },
+  { rank: 8, center: { id: 'GLTC', name: 'Great Lakes Medical Center', city: 'Detroit, MI' }, status: 'waiting', time: null, reason: null }
+];
+
+let offerTimerSeconds = 3599;
+let offerTimerInterval = null;
+let offerResolved = false;
+
+function initOffers() {
+  renderOfferCascade();
+  startOfferTimer();
+
+  document.getElementById('offerAcceptBtn').addEventListener('click', () => {
+    resolveOffer('accepted');
+  });
+  document.getElementById('offerDeclineBtn').addEventListener('click', () => {
+    document.getElementById('declineReasonDiv').style.display = 'block';
+  });
+  document.getElementById('confirmDeclineBtn').addEventListener('click', () => {
+    const reason = document.getElementById('declineReasonSelect').value;
+    if (!reason) { alert('Please select a decline reason.'); return; }
+    resolveOffer('declined', reason);
+  });
+}
+
+function renderOfferCascade() {
+  const el = document.getElementById('offerCascade');
+  el.innerHTML = '';
+  OFFER_CASCADE_DATA.forEach(o => {
+    let statusBadge = '', rowClass = '';
+    if (o.status === 'accepted') { statusBadge = '<span class="badge badge-active">ACCEPTED</span>'; rowClass = 'accepted'; }
+    else if (o.status === 'declined') { statusBadge = `<span class="badge badge-pending">DECLINED</span> <span class="text-muted" style="font-size:11px;">${o.reason || ''}</span>`; rowClass = 'declined'; }
+    else if (o.status === 'pending') { statusBadge = '<span class="badge badge-urgent">PENDING</span>'; rowClass = 'pending'; }
+    else if (o.status === 'timed-out') { statusBadge = '<span class="badge badge-inactive">TIMED OUT</span>'; rowClass = 'timed-out'; }
+    else { statusBadge = '<span class="text-muted">Waiting</span>'; rowClass = ''; }
+
+    el.innerHTML += `<div class="offer-row ${rowClass}">
+      <div class="offer-rank">${o.rank}</div>
+      <div style="flex:1;">
+        <div style="font-weight:600;">${o.center.name}</div>
+        <div class="text-muted" style="font-size:11px;">${o.center.city} — ${o.center.id}</div>
+      </div>
+      <div>${statusBadge}</div>
+      <div class="text-muted" style="font-size:11px;min-width:60px;text-align:right;">${o.time || ''}</div>
+    </div>`;
+  });
+}
+
+function startOfferTimer() {
+  if (offerTimerInterval) clearInterval(offerTimerInterval);
+  offerTimerInterval = setInterval(() => {
+    if (offerResolved) return;
+    offerTimerSeconds--;
+    if (offerTimerSeconds <= 0) { offerTimerSeconds = 0; resolveOffer('timed-out'); }
+    const m = Math.floor(offerTimerSeconds / 60);
+    const s = offerTimerSeconds % 60;
+    const timerEl = document.getElementById('offerTimer');
+    timerEl.textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    if (offerTimerSeconds < 300) timerEl.classList.add('urgent');
+  }, 1000);
+}
+
+function resolveOffer(outcome, reason) {
+  offerResolved = true;
+  if (offerTimerInterval) clearInterval(offerTimerInterval);
+  const outcomeEl = document.getElementById('offerOutcome');
+
+  OFFER_CASCADE_DATA[0].status = outcome;
+  OFFER_CASCADE_DATA[0].time = formatTime();
+  OFFER_CASCADE_DATA[0].reason = reason || null;
+
+  document.getElementById('offerAcceptBtn').disabled = true;
+  document.getElementById('offerDeclineBtn').disabled = true;
+  document.getElementById('declineReasonDiv').style.display = 'none';
+
+  if (outcome === 'accepted') {
+    outcomeEl.style.display = 'block';
+    outcomeEl.style.background = '#d4edda';
+    outcomeEl.style.color = '#155724';
+    outcomeEl.textContent = '✓ Offer ACCEPTED — Transport coordination initiated';
+    EventBus.emit('optn.offers.organ-accepted', { center: CENTERS[1].name });
+  } else {
+    outcomeEl.style.display = 'block';
+    outcomeEl.style.background = '#fff3cd';
+    outcomeEl.style.color = '#856404';
+    outcomeEl.textContent = outcome === 'timed-out' ? 'Offer timed out — advancing to next candidate' : `Offer declined (${reason}) — advancing to rank #2`;
+
+    // Auto-advance to rank 2
+    OFFER_CASCADE_DATA[1].status = 'pending';
+    document.getElementById('offerCurrentCenter').textContent = OFFER_CASCADE_DATA[1].center.name + ' (Rank #2)';
+    const pred = randomInt(30, 65);
+    document.getElementById('offerPredPct').textContent = pred + '%';
+    document.getElementById('offerPredBar').style.width = pred + '%';
+    document.getElementById('offerPredBar').className = 'score-bar-fill ' + (pred > 60 ? 'medium' : 'low');
+    EventBus.emit('optn.offers.organ-declined', { center: CENTERS[1].name, reason });
+  }
+  renderOfferCascade();
+}
+
+initOffers();
+
+// ========== WAITLIST ==========
+let waitlistSortField = 'waitDays';
+let waitlistSortAsc = false;
+
+function initWaitlist() {
+  renderWaitlist();
+  document.getElementById('waitlistSearch').addEventListener('input', renderWaitlist);
+  document.getElementById('waitlistOrganFilter').addEventListener('change', renderWaitlist);
+  document.getElementById('waitlistStatusFilter').addEventListener('change', renderWaitlist);
+  document.getElementById('closeWaitlistDetail').addEventListener('click', () => {
+    document.getElementById('waitlistDetail').style.display = 'none';
+  });
+
+  document.querySelectorAll('#waitlistTable th[data-sort]').forEach(th => {
+    th.addEventListener('click', () => {
+      const field = th.dataset.sort;
+      if (waitlistSortField === field) waitlistSortAsc = !waitlistSortAsc;
+      else { waitlistSortField = field; waitlistSortAsc = true; }
+      renderWaitlist();
+    });
+  });
+}
+
+function renderWaitlist() {
+  const search = (document.getElementById('waitlistSearch').value || '').toLowerCase();
+  const organFilter = document.getElementById('waitlistOrganFilter').value;
+  const statusFilter = document.getElementById('waitlistStatusFilter').value;
+
+  let filtered = CANDIDATES.filter(c => {
+    if (organFilter && c.organ !== organFilter) return false;
+    if (statusFilter && c.status !== statusFilter) return false;
+    if (search && !(c.firstName + ' ' + c.lastName).toLowerCase().includes(search) && !c.id.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  filtered.sort((a, b) => {
+    let av, bv;
+    if (waitlistSortField === 'name') { av = a.lastName; bv = b.lastName; }
+    else if (waitlistSortField === 'score') { av = parseFloat(a.score) || 0; bv = parseFloat(b.score) || 0; }
+    else { av = a[waitlistSortField]; bv = b[waitlistSortField]; }
+    if (av < bv) return waitlistSortAsc ? -1 : 1;
+    if (av > bv) return waitlistSortAsc ? 1 : -1;
+    return 0;
+  });
+
+  document.getElementById('waitlistTotal').textContent = filtered.length;
+  const tbody = document.getElementById('waitlistTableBody');
+  tbody.innerHTML = '';
+  filtered.forEach(c => {
+    const statusClass = c.status === 'Active' ? 'badge-active' : c.status === 'Inactive' ? 'badge-inactive' : 'badge-pending';
+    const tr = document.createElement('tr');
+    tr.style.cursor = 'pointer';
+    tr.innerHTML = `<td class="text-mono">${c.id}</td>
+      <td><strong>${c.lastName}</strong>, ${c.firstName}</td>
+      <td>${c.age}</td>
+      <td>${c.bloodType}</td>
+      <td>${c.organ}</td>
+      <td><strong>${c.score}</strong> <span class="text-muted" style="font-size:11px;">${c.scoreName}</span></td>
+      <td>${Math.floor(c.waitDays/365)}y ${c.waitDays%365}d</td>
+      <td><span class="badge ${statusClass}">${c.status}</span></td>
+      <td>${c.center.id}</td>`;
+    tr.addEventListener('click', () => showCandidateDetail(c));
+    tbody.appendChild(tr);
+  });
+}
+
+function showCandidateDetail(c) {
+  document.getElementById('waitlistDetail').style.display = 'block';
+  document.getElementById('waitlistDetailTitle').textContent = `${c.firstName} ${c.lastName} — ${c.id}`;
+  document.getElementById('waitlistDetailInfo').innerHTML = `
+    <div class="detail-row"><span class="detail-label">Patient ID</span><span class="detail-value text-mono">${c.id}</span></div>
+    <div class="detail-row"><span class="detail-label">Age</span><span class="detail-value">${c.age}</span></div>
+    <div class="detail-row"><span class="detail-label">Blood Type</span><span class="detail-value">${c.bloodType}</span></div>
+    <div class="detail-row"><span class="detail-label">Organ Needed</span><span class="detail-value">${c.organ}</span></div>
+    <div class="detail-row"><span class="detail-label">${c.scoreName} Score</span><span class="detail-value">${c.score}</span></div>
+    ${c.cpra !== null ? `<div class="detail-row"><span class="detail-label">CPRA</span><span class="detail-value">${c.cpra}%</span></div>` : ''}
+    <div class="detail-row"><span class="detail-label">Status</span><span class="detail-value">${c.status}</span></div>
+    <div class="detail-row"><span class="detail-label">Wait Time</span><span class="detail-value">${Math.floor(c.waitDays/365)}y ${c.waitDays%365}d</span></div>
+    <div class="detail-row"><span class="detail-label">Transplant Center</span><span class="detail-value">${c.center.name}</span></div>
+    <div class="detail-row"><span class="detail-label">Registered</span><span class="detail-value">${formatDate(c.registeredDate)}</span></div>
+    <div class="detail-row"><span class="detail-label">Last Updated</span><span class="detail-value">${formatDate(c.lastUpdated)}</span></div>`;
+
+  const history = document.getElementById('waitlistDetailHistory');
+  const events = [
+    { date: c.registeredDate, text: `Candidate registered at ${c.center.name}` },
+    { date: new Date(c.registeredDate.getTime() + 86400000 * 3), text: `Initial ${c.scoreName} score calculated: ${c.score}` },
+    { date: new Date(c.registeredDate.getTime() + 86400000 * randomInt(10,60)), text: `Lab values updated via FHIR feed from ${c.center.name} EHR` },
+    { date: new Date(c.registeredDate.getTime() + 86400000 * randomInt(60,180)), text: `${c.scoreName} score recalculated: ${typeof c.score === 'number' ? (c.score + randomFloat(-3,3,1)).toFixed(1) : c.score}` },
+    { date: c.lastUpdated, text: `Clinical data refreshed — status: ${c.status}` }
+  ];
+  history.innerHTML = events.map(e => `<div class="audit-entry"><span class="text-muted">${formatDate(e.date)}</span> — ${e.text}</div>`).join('');
+
+  document.getElementById('waitlistDetail').scrollIntoView({ behavior: 'smooth' });
+}
+
+initWaitlist();
+
+// ========== DONOR MANAGEMENT ==========
+const DONOR_STAGES = ['Hospital Referral', 'OPO Evaluation', 'Family Authorization', 'Donor Management', 'Organ Recovery', 'Disposition'];
+
+function initDonors() {
+  const container = document.getElementById('donorCards');
+  container.innerHTML = '';
+  DONORS.forEach(d => {
+    const kdpiClass = d.kdpi < 30 ? 'high' : d.kdpi < 60 ? 'medium' : 'low';
+    const pipelineHtml = DONOR_STAGES.map((s, i) => {
+      const cls = (i + 1) < d.stageIdx ? 'completed' : (i + 1) === d.stageIdx ? 'active' : '';
+      return `<div class="pipeline-step ${cls}">${s.split(' ').pop()}<span class="pipeline-step-label">${i + 1}</span></div>`;
+    }).join('');
+
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.style.cursor = 'pointer';
+    card.innerHTML = `
+      <div class="flex-row mb-8">
+        <strong style="font-size:15px;">${d.id}</strong>
+        <span class="text-muted">Age ${d.age} | ${d.bloodType} | ${d.opo.name}</span>
+      </div>
+      <div class="flex-row mb-8" style="gap:8px;flex-wrap:wrap;">
+        ${d.organs.map(o => `<span class="tag">${o}</span>`).join('')}
+      </div>
+      <div class="flex-row mb-8">
+        <span class="text-muted" style="font-size:12px;">KDPI:</span>
+        <div class="score-bar-container" style="flex:1;">
+          <div class="score-bar"><div class="score-bar-fill ${kdpiClass}" style="width:${d.kdpi}%"></div></div>
+          <span style="font-size:12px;">${d.kdpi}%</span>
+        </div>
+      </div>
+      <div class="pipeline" style="margin:8px 0 0 0;">${pipelineHtml}</div>`;
+    card.addEventListener('click', () => showDonorDetail(d));
+    container.appendChild(card);
+  });
+
+  document.getElementById('closeDonorDetail').addEventListener('click', () => {
+    document.getElementById('donorDetail').style.display = 'none';
+  });
+}
+
+function showDonorDetail(d) {
+  document.getElementById('donorDetail').style.display = 'block';
+  document.getElementById('donorDetailTitle').textContent = `${d.id} — Age ${d.age}, ${d.bloodType}`;
+  document.getElementById('donorDetailInfo').innerHTML = `
+    <div class="detail-row"><span class="detail-label">Donor ID</span><span class="detail-value text-mono">${d.id}</span></div>
+    <div class="detail-row"><span class="detail-label">Age</span><span class="detail-value">${d.age}</span></div>
+    <div class="detail-row"><span class="detail-label">Blood Type</span><span class="detail-value">${d.bloodType}</span></div>
+    <div class="detail-row"><span class="detail-label">BMI</span><span class="detail-value">${d.bmi}</span></div>
+    <div class="detail-row"><span class="detail-label">Cause of Death</span><span class="detail-value">${d.cause}</span></div>
+    <div class="detail-row"><span class="detail-label">OPO</span><span class="detail-value">${d.opo.name}</span></div>
+    <div class="detail-row"><span class="detail-label">Region</span><span class="detail-value">${d.opo.region}</span></div>
+    <div class="detail-row"><span class="detail-label">KDPI</span><span class="detail-value">${d.kdpi}%</span></div>
+    <div class="detail-row"><span class="detail-label">Current Stage</span><span class="detail-value">${d.stage}</span></div>
+    <div class="detail-row"><span class="detail-label">Organs</span><span class="detail-value">${d.organs.length} available</span></div>`;
+
+  const organsEl = document.getElementById('donorDetailOrgans');
+  organsEl.innerHTML = d.organs.map(o => {
+    const quality = randomInt(60, 98);
+    const cls = quality > 80 ? 'high' : quality > 60 ? 'medium' : 'low';
+    return `<div style="padding:8px;border:1px solid var(--color-border);border-radius:var(--radius-sm);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;">
+      <strong>${o}</strong>
+      <div class="score-bar-container" style="width:150px;">
+        <div class="score-bar"><div class="score-bar-fill ${cls}" style="width:${quality}%"></div></div>
+        <span style="font-size:11px;">${quality}% quality</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('donorDetail').scrollIntoView({ behavior: 'smooth' });
+}
+
+initDonors();
+
+// ========== TRANSPORT & LOGISTICS ==========
+function initTransport() {
+  renderTransportTable();
+  // Tick ischemia timers every minute
+  setInterval(() => {
+    TRANSPORTS.forEach(t => { if (t.status === 'In Transit') t.ischemia++; });
+    renderTransportTable();
+  }, 60000);
+}
+
+function renderTransportTable() {
+  const tbody = document.getElementById('transportTableBody');
+  tbody.innerHTML = '';
+  TRANSPORTS.forEach(t => {
+    const ischColor = t.ischemia < 240 ? 'var(--color-accent)' : t.ischemia < 360 ? 'var(--color-warning)' : 'var(--color-error)';
+    const statusBadge = t.status === 'In Transit' ? 'badge-info' : t.status === 'Arrived' ? 'badge-active' : 'badge-pending';
+    tbody.innerHTML += `<tr>
+      <td class="text-mono">${t.id}</td>
+      <td><strong>${t.organ}</strong></td>
+      <td>${t.donor.id}</td>
+      <td>${t.from.city}</td>
+      <td>${t.to.city}</td>
+      <td>${t.method}</td>
+      <td><span class="badge ${statusBadge}">${t.status}</span></td>
+      <td style="color:${ischColor};font-weight:700;font-family:var(--font-mono);">${formatMinutes(t.ischemia)}</td>
+    </tr>`;
+  });
+}
+
+initTransport();
+
+// ========== ANALYTICS & AI ==========
+function initAnalytics() {
+  // Acceptance prediction
+  document.getElementById('runPredictionBtn').addEventListener('click', () => {
+    const organ = document.getElementById('predOrganType').value;
+    const kdpi = document.getElementById('predKdpi').value;
+    const base = kdpi === 'low' ? 85 : kdpi === 'med' ? 60 : 35;
+    const bars = document.getElementById('predictionBars');
+    bars.innerHTML = '';
+    for (let i = 1; i <= 6; i++) {
+      const pct = Math.max(5, base - (i - 1) * randomInt(8, 18));
+      const cls = pct > 60 ? 'high' : pct > 35 ? 'medium' : 'low';
+      bars.innerHTML += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+        <span style="min-width:60px;font-size:12px;">Rank #${i}</span>
+        <div class="score-bar" style="flex:1;"><div class="score-bar-fill ${cls}" style="width:${pct}%"></div></div>
+        <span style="min-width:36px;font-size:12px;font-weight:600;">${pct}%</span>
+      </div>`;
+    }
+    document.getElementById('predictionResult').style.display = 'block';
+  });
+
+  // Wait time estimation
+  document.getElementById('runWaitEstBtn').addEventListener('click', () => {
+    const organ = document.getElementById('waitEstOrgan').value;
+    const blood = document.getElementById('waitEstBlood').value;
+    const baseMonths = { Kidney: 42, Liver: 11, Heart: 8, Lung: 6 };
+    const bloodMult = blood.startsWith('O') ? 1.4 : blood.startsWith('B') ? 1.2 : blood.startsWith('AB') ? 0.7 : 1.0;
+    const months = Math.round(baseMonths[organ] * bloodMult * randomFloat(0.8, 1.2, 2));
+    const lo = Math.max(1, months - randomInt(3, 8));
+    const hi = months + randomInt(3, 12);
+    document.getElementById('waitEstValue').textContent = months + ' months';
+    document.getElementById('waitEstRange').textContent = `80% confidence interval: ${lo}–${hi} months`;
+    document.getElementById('waitEstResult').style.display = 'block';
+  });
+
+  // Policy simulation
+  const beforeData = [42, 28, 18, 8, 4];
+  const labels = ['Local', '250nm', '500nm', 'Region', 'National'];
+  renderPolicyChart('policyChartBefore', beforeData, labels, '#1a4480');
+  renderPolicyChart('policyChartAfter', beforeData, labels, '#2e6db4');
+
+  document.getElementById('policySlider').addEventListener('input', (e) => {
+    const val = parseInt(e.target.value);
+    document.getElementById('policySliderVal').textContent = val + '%';
+    const factor = val / 50;
+    const after = beforeData.map((v, i) => {
+      if (i < 2) return Math.round(v * factor);
+      return Math.round(v * (2 - factor));
+    });
+    renderPolicyChart('policyChartAfter', after, labels, '#2e6db4');
+  });
+}
+
+function renderPolicyChart(containerId, data, labels, color) {
+  const container = document.getElementById(containerId);
+  const maxVal = Math.max(...data, 1);
+  container.innerHTML = '';
+  data.forEach((v, i) => {
+    const pct = (v / maxVal) * 100;
+    container.innerHTML += `<div class="chart-bar" style="height:${Math.max(4, pct)}%;background:${color};" title="${labels[i]}: ${v}%"><span class="chart-bar-label">${labels[i]}</span></div>`;
+  });
+}
+
+initAnalytics();
+
+// ========== ARCHITECTURE EXPLORER ==========
+const ARCH_SERVICES = {
+  matching: {
+    title: 'Matching & Allocation Service',
+    tier: 'Tier 1 — Life-Critical',
+    sla: '99.99%',
+    desc: 'Executes organ-to-candidate matching algorithms, produces rank-ordered candidate lists, manages allocation policy configurations, and detects AOOS events.',
+    aws: ['EKS (dedicated node group)', 'Aurora PostgreSQL (Global DB)', 'DynamoDB (policy config)', 'ElastiCache Redis (score cache)', 'Amazon QLDB (audit)', 'MSK (Kafka)'],
+    events: ['match-run-initiated', 'match-run-completed', 'aoos-detected'],
+    reqs: ['FR-MATCH-001–006', 'FR-AOOS-001–003']
+  },
+  offers: {
+    title: 'Organ Offer Service',
+    tier: 'Tier 1 — Life-Critical',
+    sla: '99.99%',
+    desc: 'Manages organ offer workflow from match run completion through final acceptance — presenting offers, tracking responses, enforcing acceptance windows, and managing parallel offers.',
+    aws: ['EKS (dedicated node group)', 'Step Functions (Express)', 'Aurora PostgreSQL', 'SNS + Pinpoint', 'API Gateway WebSocket', 'S3 (media)'],
+    events: ['organ-offered', 'organ-accepted', 'organ-declined', 'offer-timed-out'],
+    reqs: ['FR-OFFER-001–006']
+  },
+  waitlist: {
+    title: 'Waitlist Service',
+    tier: 'Tier 1 — Life-Critical',
+    sla: '99.99%',
+    desc: 'Maintains the authoritative national waiting list for all organ types. Manages candidate registration, status changes, clinical data updates, and priority score calculations.',
+    aws: ['EKS (dedicated node group)', 'Aurora PostgreSQL (Global DB)', 'ElastiCache Redis', 'API Gateway + Lambda (FHIR)', 'EventBridge + SNS (alerts)', 'MSK'],
+    events: ['candidate-registered', 'candidate-status-changed', 'score-recalculated'],
+    reqs: ['FR-WAIT-001–008']
+  },
+  donor: {
+    title: 'Donor Management Service',
+    tier: 'Tier 2 — Mission-Critical',
+    sla: '99.95%',
+    desc: 'Manages the full donor lifecycle — referral intake, OPO evaluation, donor registration, clinical data management, organ recovery coordination, and living donor workflows.',
+    aws: ['EKS (Tier 2 node group)', 'Aurora PostgreSQL', 'S3 + CloudFront (imaging)', 'Lambda (KDPI/DRI calc)', 'EventBridge + SQS', 'MSK'],
+    events: ['donor-registered', 'donor-updated', 'organ-recovered'],
+    reqs: ['FR-DONOR-001–007']
+  },
+  transport: {
+    title: 'Transport & Logistics Service',
+    tier: 'Tier 2 — Mission-Critical',
+    sla: '99.95%',
+    desc: 'End-to-end organ tracking from recovery through transplant. Labeling, GPS tracking, cold ischemia time calculation, and transport provider integration.',
+    aws: ['EKS (Tier 2 node group)', 'DynamoDB', 'IoT Core + Kinesis', 'Lambda (label gen, ischemia calc)', 'API Gateway', 'MSK'],
+    events: ['organ-in-transit', 'organ-arrived', 'organ-checked-in', 'transport-incident'],
+    reqs: ['FR-TRANS-001–006']
+  },
+  datacollection: {
+    title: 'Data Collection Service (TIEDI Next)',
+    tier: 'Tier 2 — Mission-Critical',
+    sla: '99.95%',
+    desc: 'Manages all OPTN-mandated electronic data collection forms — submission, validation, deadlines, data locks, corrections, and bulk import/export.',
+    aws: ['EKS (Tier 2 node group)', 'Aurora PostgreSQL', 'S3 + DynamoDB (schema registry)', 'Lambda (validation)', 'EventBridge Scheduler', 'AWS Batch'],
+    events: ['form-submitted', 'form-locked', 'form-correction-requested'],
+    reqs: ['FR-DATA-001–007']
+  },
+  outcomes: {
+    title: 'Transplant & Outcomes Service',
+    tier: 'Tier 2 — Mission-Critical',
+    sla: '99.95%',
+    desc: 'Records transplant events, manages follow-up schedules, collects outcome data, and calculates risk-adjusted program-specific metrics.',
+    aws: ['EKS (Tier 2 node group)', 'Aurora PostgreSQL', 'EventBridge Scheduler + Step Functions', 'AWS Batch + Lambda', 'SQS (CMS integration)', 'MSK'],
+    events: ['transplant-reported', 'follow-up-submitted', 'graft-failure-reported'],
+    reqs: ['FR-TX-001–006']
+  },
+  compliance: {
+    title: 'Compliance & Member Service',
+    tier: 'Tier 3 — Operational',
+    sla: '99.9%',
+    desc: 'OPTN member registry, policy compliance tracking, MPSC workflow support, and automated compliance reporting.',
+    aws: ['EKS (Tier 3 node group)', 'Aurora PostgreSQL', 'AWS Batch + Lambda', 'S3 (documents)', 'Step Functions (MPSC workflow)', 'MSK (consumer)'],
+    events: ['member-flagged'],
+    reqs: ['FR-COMP-001–004']
+  },
+  publicdata: {
+    title: 'Public Data & Transparency Service',
+    tier: 'Tier 3 — Operational',
+    sla: '99.9%',
+    desc: 'Public-facing data portal, interactive dashboards, public API, system health metrics, and transplant center comparison tools.',
+    aws: ['CloudFront + S3 (static site)', 'API Gateway (REST)', 'Lambda + DynamoDB (aggregates)', 'EKS (Tier 3)', 'CloudWatch Synthetics', 'Route 53 Health Checks'],
+    events: [],
+    reqs: ['FR-PUB-001–005']
+  },
+  notifications: {
+    title: 'Notification Service',
+    tier: 'Tier 3 — Operational',
+    sla: '99.9%',
+    desc: 'Centralized notification delivery across all channels — push, SMS, email, in-app, WebSocket — with guaranteed delivery for organ offer notifications.',
+    aws: ['EKS (Tier 3 node group)', 'SNS + SES + Pinpoint', 'API Gateway WebSocket', 'DynamoDB (preferences)', 'SQS (DLQ + retry)', 'Amazon Connect (phone escalation)'],
+    events: [],
+    reqs: ['NFR-UX-006', 'FR-WAIT-008']
+  },
+  patient: {
+    title: 'Patient Portal Service',
+    tier: 'Tier 3 — Operational',
+    sla: '99.9%',
+    desc: 'Secure, patient-facing portal for waiting list status, educational materials, and transplant center comparison tools.',
+    aws: ['CloudFront + S3 (React SPA)', 'API Gateway + Lambda', 'Amazon Cognito (MFA)', 'S3 + DynamoDB (content)'],
+    events: [],
+    reqs: ['FR-WAIT-007', 'FR-PUB-005']
+  }
+};
+
+function initArchitecture() {
+  document.querySelectorAll('.arch-node').forEach(node => {
+    node.addEventListener('click', () => {
+      const svc = ARCH_SERVICES[node.dataset.service];
+      if (!svc) return;
+      showArchDetail(svc);
+    });
+  });
+  document.getElementById('closeArchDetail').addEventListener('click', () => {
+    document.getElementById('archDetail').style.display = 'none';
+  });
+}
+
+function showArchDetail(svc) {
+  document.getElementById('archDetail').style.display = 'block';
+  document.getElementById('archDetailTitle').textContent = svc.title;
+  document.getElementById('archDetailSubtitle').textContent = svc.tier + ' — SLA: ' + svc.sla;
+
+  document.getElementById('archDetailContent').innerHTML = `
+    <div>
+      <h4 style="font-size:13px;font-weight:700;margin-bottom:8px;">Description</h4>
+      <p style="font-size:13px;color:#555;">${svc.desc}</p>
+      <h4 style="font-size:13px;font-weight:700;margin:12px 0 8px;">Requirements</h4>
+      <div>${svc.reqs.map(r => `<span class="tag" style="margin:2px;">${r}</span>`).join('')}</div>
+    </div>
+    <div>
+      <h4 style="font-size:13px;font-weight:700;margin-bottom:8px;">AWS Services</h4>
+      <div class="detail-panel">${svc.aws.map(a => `<div style="padding:4px 0;border-bottom:1px solid #eee;font-size:12px;">${a}</div>`).join('')}</div>
+    </div>
+    <div>
+      <h4 style="font-size:13px;font-weight:700;margin-bottom:8px;">Kafka Event Topics</h4>
+      ${svc.events.length ? `<div class="audit-log" style="max-height:200px;">${svc.events.map(e => `<div class="audit-entry text-mono" style="font-size:11px;">optn.${e}</div>`).join('')}</div>` : '<p class="text-muted" style="font-size:12px;">Consumer only — no published topics</p>'}
+    </div>`;
+
+  document.getElementById('archDetail').scrollIntoView({ behavior: 'smooth' });
+}
+
+initArchitecture();
 </script>
 
 </body>
