@@ -216,10 +216,10 @@ body {
   top: 0; left: 0;
   width: 100%; height: 3px;
 }
-.stat-card.tier1::before { background: linear-gradient(90deg, #ef4444, #f87171); }
-.stat-card.tier2::before { background: linear-gradient(90deg, #f97316, #fb923c); }
-.stat-card.tier3::before { background: linear-gradient(90deg, #2563eb, #60a5fa); }
-.stat-card.accent::before { background: linear-gradient(90deg, #22c55e, #4ade80); }
+.stat-card.tier1::before { background: linear-gradient(90deg, #1e40af, #3b82f6); }
+.stat-card.tier2::before { background: linear-gradient(90deg, #2563eb, #60a5fa); }
+.stat-card.tier3::before { background: linear-gradient(90deg, #3b82f6, #93c5fd); }
+.stat-card.accent::before { background: linear-gradient(90deg, #1e40af, #60a5fa); }
 .stat-label {
   font-size: 11px;
   text-transform: uppercase;
@@ -234,6 +234,7 @@ body {
   line-height: 1.1;
   margin: 6px 0;
   letter-spacing: -1px;
+  text-shadow: 0 0 24px rgba(37,99,235,0.06);
 }
 .stat-change {
   font-size: 12px;
@@ -823,6 +824,10 @@ body {
 
   <!-- DASHBOARD TAB -->
   <div class="tab-panel active" id="tab-dashboard">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;">
+      <div style="font-size:14px;font-weight:600;color:var(--color-text);letter-spacing:-0.1px;">Operations Overview</div>
+      <div style="font-size:11px;color:var(--color-text-secondary);">Last updated: <span style="font-family:var(--font-mono);">just now</span></div>
+    </div>
     <div class="grid-4 mb-16" id="dashStats">
       <div class="stat-card tier1">
         <div class="stat-label">Active Candidates</div>
@@ -866,15 +871,18 @@ body {
             </div>
             <span class="badge badge-active">Healthy</span>
           </div>
-          <div class="detail-panel">
-            <div class="detail-row"><span class="detail-label">Matching Engine (Tier 1)</span><span class="detail-value" style="color:var(--color-accent);">99.99% &mdash; 42ms p99</span></div>
-            <div class="detail-row"><span class="detail-label">Offer Service (Tier 1)</span><span class="detail-value" style="color:var(--color-accent);">99.99% &mdash; 1.2s delivery</span></div>
-            <div class="detail-row"><span class="detail-label">Waitlist Service (Tier 1)</span><span class="detail-value" style="color:var(--color-accent);">99.99% &mdash; 85ms p95</span></div>
-            <div class="detail-row"><span class="detail-label">Donor Management (Tier 2)</span><span class="detail-value" style="color:var(--color-accent);">99.97% &mdash; 120ms p95</span></div>
-            <div class="detail-row"><span class="detail-label">Transport Service (Tier 2)</span><span class="detail-value" style="color:var(--color-accent);">99.96% &mdash; 95ms p95</span></div>
-            <div class="detail-row"><span class="detail-label">Event Backbone (MSK)</span><span class="detail-value" style="color:var(--color-accent);">99.99% &mdash; 12ms e2e</span></div>
-            <div class="detail-row"><span class="detail-label">FHIR API Gateway</span><span class="detail-value" style="color:var(--color-accent);">99.95% &mdash; 210ms p95</span></div>
-          </div>
+          <table class="data-table" style="font-size:12px;">
+            <thead><tr><th>Service</th><th style="text-align:right;">Uptime</th><th style="text-align:right;">Latency</th></tr></thead>
+            <tbody>
+              <tr><td><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#ef4444;margin-right:6px;"></span>Matching Engine</td><td style="text-align:right;color:#059669;font-weight:600;">99.99%</td><td style="text-align:right;font-family:var(--font-mono);color:var(--color-text-secondary);">42ms</td></tr>
+              <tr><td><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#ef4444;margin-right:6px;"></span>Offer Service</td><td style="text-align:right;color:#059669;font-weight:600;">99.99%</td><td style="text-align:right;font-family:var(--font-mono);color:var(--color-text-secondary);">1.2s</td></tr>
+              <tr><td><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#ef4444;margin-right:6px;"></span>Waitlist Service</td><td style="text-align:right;color:#059669;font-weight:600;">99.99%</td><td style="text-align:right;font-family:var(--font-mono);color:var(--color-text-secondary);">85ms</td></tr>
+              <tr><td><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#f97316;margin-right:6px;"></span>Donor Management</td><td style="text-align:right;color:#059669;font-weight:600;">99.97%</td><td style="text-align:right;font-family:var(--font-mono);color:var(--color-text-secondary);">120ms</td></tr>
+              <tr><td><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#f97316;margin-right:6px;"></span>Transport Service</td><td style="text-align:right;color:#059669;font-weight:600;">99.96%</td><td style="text-align:right;font-family:var(--font-mono);color:var(--color-text-secondary);">95ms</td></tr>
+              <tr><td><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#3b82f6;margin-right:6px;"></span>Event Backbone (MSK)</td><td style="text-align:right;color:#059669;font-weight:600;">99.99%</td><td style="text-align:right;font-family:var(--font-mono);color:var(--color-text-secondary);">12ms</td></tr>
+              <tr><td><span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#3b82f6;margin-right:6px;"></span>FHIR API Gateway</td><td style="text-align:right;color:#16a34a;font-weight:600;">99.95%</td><td style="text-align:right;font-family:var(--font-mono);color:var(--color-text-secondary);">210ms</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
       <div>
@@ -884,7 +892,7 @@ body {
               <div class="card-title">Live Event Feed</div>
               <div class="card-subtitle">Real-time domain events from Kafka backbone</div>
             </div>
-            <span class="badge badge-info" id="eventCount">0 events</span>
+            <span style="font-size:11px;color:var(--color-text-secondary);font-family:var(--font-mono);font-weight:500;" id="eventCount">0 events</span>
           </div>
           <div class="event-feed" id="eventFeed"></div>
         </div>
@@ -1662,21 +1670,21 @@ function initDashboard() {
   animateCounter('statTransit', inTransit);
   animateCounter('statTransplants', 14);
 
-  // Organ chart
+  // Organ chart — monochromatic blue palette
   const chartData = [
-    { label: 'Kidney', value: 186, color: '#1a4480' },
-    { label: 'Liver', value: 124, color: '#2e6db4' },
-    { label: 'Heart', value: 78, color: '#d54309' },
-    { label: 'Lung', value: 62, color: '#e5a000' },
-    { label: 'Pancreas', value: 18, color: '#00a91c' },
-    { label: 'Intestine', value: 6, color: '#9b59b6' }
+    { label: 'Kidney', value: 186, color: '#1e40af' },
+    { label: 'Liver', value: 124, color: '#2563eb' },
+    { label: 'Heart', value: 78, color: '#3b82f6' },
+    { label: 'Lung', value: 62, color: '#60a5fa' },
+    { label: 'Pancreas', value: 18, color: '#93c5fd' },
+    { label: 'Intestine', value: 6, color: '#bfdbfe' }
   ];
   const chart = document.getElementById('organChart');
   const maxVal = Math.max(...chartData.map(d => d.value));
-  chart.innerHTML = '';
+  chart.innerHTML = '<div style="position:absolute;top:50%;left:0;right:0;border-top:1px dashed #e2e8f0;z-index:0;"></div>';
   chartData.forEach(d => {
     const pct = (d.value / maxVal) * 100;
-    chart.innerHTML += `<div class="chart-bar" style="height:${pct}%;background:${d.color};" title="${d.label}: ${d.value}"><span class="chart-bar-label">${d.label}</span></div>`;
+    chart.innerHTML += `<div class="chart-bar" style="height:${pct}%;background:${d.color};z-index:1;" title="${d.label}: ${d.value}"><span style="position:absolute;top:-18px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:700;color:${d.color};white-space:nowrap;">${d.value}</span><span class="chart-bar-label">${d.label}</span></div>`;
   });
 
   // Start live event feed
