@@ -938,7 +938,33 @@ body {
         <p style="font-size:13px;margin-top:4px;color:#333;">Organ allocated to rank #3 instead of rank #1. Structured justification required. Event routed to MPSC for review. <span class="tag">FR-AOOS-001</span></p>
       </div>
       <div id="matchResults" style="display:none;">
+        <!-- Three-layer architecture diagram -->
+        <div style="background:var(--color-surface-alt);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:14px 18px;margin-bottom:16px;">
+          <div style="font-size:11px;font-weight:700;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:10px;">AI-Augmented Matching Pipeline</div>
+          <div style="display:flex;gap:8px;align-items:stretch;">
+            <div style="flex:1;background:#1e40af;color:white;border-radius:var(--radius-sm);padding:8px 10px;font-size:11px;text-align:center;">
+              <div style="font-weight:700;">Policy Engine</div>
+              <div style="opacity:0.7;font-size:10px;">Deterministic rank</div>
+            </div>
+            <div style="display:flex;align-items:center;font-size:14px;color:#94a3b8;">+</div>
+            <div style="flex:1;background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--radius-sm);padding:8px 10px;font-size:11px;text-align:center;">
+              <div style="font-weight:700;color:#1e40af;">Layer 1: ML Scores</div>
+              <div style="color:#6b7280;font-size:10px;">Enhanced MELD/KDPI/EPTS</div>
+            </div>
+            <div style="display:flex;align-items:center;font-size:14px;color:#94a3b8;">+</div>
+            <div style="flex:1;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:var(--radius-sm);padding:8px 10px;font-size:11px;text-align:center;">
+              <div style="font-weight:700;color:#166534;">Layer 2: TBS</div>
+              <div style="color:#6b7280;font-size:10px;">Donor-recipient benefit</div>
+            </div>
+            <div style="display:flex;align-items:center;font-size:14px;color:#94a3b8;">+</div>
+            <div style="flex:1;background:#fefce8;border:1px solid #fde68a;border-radius:var(--radius-sm);padding:8px 10px;font-size:11px;text-align:center;">
+              <div style="font-weight:700;color:#92400e;">Layer 3: Simulator</div>
+              <div style="color:#6b7280;font-size:10px;">Policy optimization</div>
+            </div>
+          </div>
+        </div>
         <h3 style="font-size:14px;font-weight:700;margin-bottom:8px;">Rank-Ordered Candidate List</h3>
+        <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:10px;">Policy engine determines rank. AI layers provide advisory scores. Click a row to view SHAP explanation.</div>
         <div style="overflow-x:auto;">
           <table class="data-table" id="matchTable">
             <thead>
@@ -946,16 +972,27 @@ body {
                 <th>Rank</th>
                 <th>Candidate</th>
                 <th>Age</th>
-                <th>Blood Type</th>
-                <th>Score</th>
-                <th>CPRA</th>
+                <th>Blood</th>
+                <th>Legacy Score</th>
+                <th>ML Score</th>
+                <th>TBS</th>
                 <th>Wait Time</th>
                 <th>Center</th>
-                <th>Compatibility</th>
               </tr>
             </thead>
             <tbody id="matchTableBody"></tbody>
           </table>
+        </div>
+        <div id="shapPanel" style="display:none;margin-top:16px;background:var(--color-surface-alt);border:1px solid var(--color-border);border-radius:var(--radius-md);padding:18px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <div>
+              <div style="font-size:14px;font-weight:700;" id="shapTitle">SHAP Explanation</div>
+              <div style="font-size:11px;color:var(--color-text-secondary);">Top features driving Transplant Benefit Score — <span style="color:#f97316;font-weight:600;">Advisory only, does not change rank</span></div>
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="document.getElementById('shapPanel').style.display='none'">Close</button>
+          </div>
+          <div id="shapBars"></div>
+          <div style="margin-top:10px;font-size:11px;color:var(--color-text-secondary);font-style:italic;">Model: Representation Learning TBS v1.3 | Trained on OPTN/SRTR historical data (2015-2025) | Uncertainty: shown as ± range</div>
         </div>
       </div>
     </div>
@@ -989,7 +1026,15 @@ body {
             <div class="detail-row"><span class="detail-label">Current Offer To</span><span class="detail-value" id="offerCurrentCenter">Northeast Medical Center (Rank #1)</span></div>
             <div class="detail-row"><span class="detail-label">Cold Ischemia</span><span class="detail-value" id="offerIschemia">2h 14m</span></div>
             <div class="detail-row">
-              <span class="detail-label">AI Acceptance Prediction</span>
+              <span class="detail-label">Transplant Benefit Score</span>
+              <span class="detail-value"><strong style="color:#059669;">+5.4 years</strong> <span style="font-size:10px;color:var(--color-text-secondary);">&plusmn;0.7</span></span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Top SHAP Factors</span>
+              <span class="detail-value" style="font-size:11px;">HLA match <span style="color:#22c55e;">+1.8y</span>, Age compat. <span style="color:#22c55e;">+1.2y</span>, Ischemia <span style="color:#ef4444;">-0.4y</span></span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Acceptance Prediction</span>
               <span class="detail-value">
                 <div class="score-bar-container">
                   <div class="score-bar" style="width:120px;"><div class="score-bar-fill high" style="width:73%" id="offerPredBar"></div></div>
@@ -998,6 +1043,7 @@ body {
               </span>
             </div>
           </div>
+          <div style="font-size:10px;color:#f97316;font-weight:600;text-align:center;margin-bottom:12px;">AI Decision Support — Advisory Only | Clinician retains full accept/decline authority</div>
           <div style="text-align:center;margin-bottom:16px;">
             <div class="text-muted" style="font-size:11px;margin-bottom:4px;">Time Remaining</div>
             <div class="countdown-timer" id="offerTimer">59:59</div>
@@ -1310,33 +1356,32 @@ body {
       <div class="card">
         <div class="card-header">
           <div>
-            <div class="card-title">Wait Time Estimation</div>
-            <div class="card-subtitle">Projected wait time by organ type and blood type</div>
+            <div class="card-title">Model Governance &amp; Validation</div>
+            <div class="card-subtitle">Deployed AI models — 7-step validation pipeline</div>
           </div>
-          <span class="tag">AI/ML</span>
+          <span class="tag">Section 6</span>
         </div>
-        <div class="flex-row mb-16" style="flex-wrap:wrap;gap:12px;">
-          <div>
-            <label class="text-muted" style="font-size:11px;display:block;margin-bottom:4px;">Organ</label>
-            <select class="select-input" id="waitEstOrgan">
-              <option>Kidney</option><option>Liver</option><option>Heart</option><option>Lung</option>
-            </select>
-          </div>
-          <div>
-            <label class="text-muted" style="font-size:11px;display:block;margin-bottom:4px;">Blood Type</label>
-            <select class="select-input" id="waitEstBlood">
-              <option>O+</option><option>O-</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option>
-            </select>
-          </div>
-          <div style="display:flex;align-items:flex-end;">
-            <button class="btn btn-primary btn-sm" id="runWaitEstBtn">Estimate</button>
-          </div>
-        </div>
-        <div id="waitEstResult" style="display:none;">
-          <div style="text-align:center;padding:16px;">
-            <div class="text-muted" style="font-size:11px;">Estimated Median Wait Time</div>
-            <div style="font-size:36px;font-weight:700;color:var(--color-primary);" id="waitEstValue">—</div>
-            <div class="text-muted" style="font-size:12px;" id="waitEstRange">—</div>
+        <table class="data-table" style="font-size:12px;">
+          <thead><tr><th>Model</th><th>Layer</th><th>Organ</th><th>AUC</th><th>Status</th><th>Bias</th></tr></thead>
+          <tbody>
+            <tr><td style="font-weight:600;">ML-MELD</td><td>Layer 1</td><td>Liver</td><td style="font-family:var(--font-mono);">0.84</td><td><span class="badge badge-active">Production</span></td><td><span style="color:#059669;">Passed</span></td></tr>
+            <tr><td style="font-weight:600;">ML-KDPI/EPTS</td><td>Layer 1</td><td>Kidney</td><td style="font-family:var(--font-mono);">0.78</td><td><span class="badge badge-pending">Shadow</span></td><td><span style="color:#059669;">Passed</span></td></tr>
+            <tr><td style="font-weight:600;">Lung CAS Enhanced</td><td>Layer 1</td><td>Lung</td><td style="font-family:var(--font-mono);">0.79</td><td><span class="badge badge-pending">Shadow</span></td><td><span style="color:#d97706;">Review</span></td></tr>
+            <tr><td style="font-weight:600;">Kidney TBS</td><td>Layer 2</td><td>Kidney</td><td style="font-family:var(--font-mono);">0.81</td><td><span class="badge badge-pending">Shadow</span></td><td><span style="color:#059669;">Passed</span></td></tr>
+            <tr><td style="font-weight:600;">Liver TBS</td><td>Layer 2</td><td>Liver</td><td style="font-family:var(--font-mono);">0.79</td><td><span class="badge badge-info">Validation</span></td><td><span style="color:#6b7280;">Pending</span></td></tr>
+            <tr><td style="font-weight:600;">Acceptance Predictor</td><td>Layer 2</td><td>All</td><td style="font-family:var(--font-mono);">0.76</td><td><span class="badge badge-active">Production</span></td><td><span style="color:#059669;">Passed</span></td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:14px;">
+          <div style="font-size:11px;font-weight:600;color:var(--color-text-secondary);margin-bottom:6px;">Validation Pipeline (per Section 6.1)</div>
+          <div class="pipeline" style="margin:0;">
+            <div class="pipeline-step completed">Technical<span class="pipeline-step-label">AUC/Brier</span></div>
+            <div class="pipeline-step completed">Simulation<span class="pipeline-step-label">Digital twin</span></div>
+            <div class="pipeline-step completed">Clinical<span class="pipeline-step-label">Committee</span></div>
+            <div class="pipeline-step completed">Bias Audit<span class="pipeline-step-label">Subgroups</span></div>
+            <div class="pipeline-step active">Shadow<span class="pipeline-step-label">6-month</span></div>
+            <div class="pipeline-step">Public<span class="pipeline-step-label">Comment</span></div>
+            <div class="pipeline-step">Board<span class="pipeline-step-label">Approval</span></div>
           </div>
         </div>
       </div>
@@ -1345,26 +1390,43 @@ body {
       <div class="card">
         <div class="card-header">
           <div>
-            <div class="card-title">Policy Simulation</div>
-            <div class="card-subtitle">Adjust allocation weight and see projected impact</div>
+            <div class="card-title">Layer 3: Policy Simulator (Digital Twin)</div>
+            <div class="card-subtitle">Simulate proposed allocation policy changes against 5+ years of historical OPTN data</div>
           </div>
-          <span class="tag">Sandbox</span>
+          <span class="badge badge-tier2">Layer 3</span>
         </div>
-        <div class="mb-16">
-          <label class="text-muted" style="font-size:12px;display:block;margin-bottom:8px;">
-            Geographic proximity weight: <strong id="policySliderVal">50%</strong>
-          </label>
-          <input type="range" min="0" max="100" value="50" id="policySlider" style="width:100%;">
+        <div class="flex-row mb-16" style="flex-wrap:wrap;gap:12px;">
+          <div style="flex:1;min-width:200px;">
+            <label class="text-muted" style="font-size:11px;display:block;margin-bottom:4px;">Policy Scenario</label>
+            <select class="select-input" id="policyScenario" style="width:100%;">
+              <option value="ml-meld">Replace MELD with ML-Enhanced Score (OPOM approach)</option>
+              <option value="distance">Expand kidney distance threshold 250nm → 500nm</option>
+              <option value="longevity">Add longevity matching for KDPI &lt;20%</option>
+              <option value="proximity">Adjust geographic proximity weight</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:flex-end;">
+            <button class="btn btn-primary btn-sm" id="runSimBtn">Run Simulation</button>
+          </div>
         </div>
-        <div class="flex-row mb-8" style="justify-content:space-between;">
-          <span class="text-muted" style="font-size:11px;">Current Policy</span>
-          <span class="text-muted" style="font-size:11px;">Simulated Policy</span>
+        <div id="simResults" style="display:none;">
+          <div class="grid-4 mb-16" style="gap:10px;" id="simMetrics"></div>
+          <div class="mb-16" id="simSliderArea" style="display:none;">
+            <label class="text-muted" style="font-size:12px;display:block;margin-bottom:8px;">
+              Geographic proximity weight: <strong id="policySliderVal">50%</strong>
+            </label>
+            <input type="range" min="0" max="100" value="50" id="policySlider" style="width:100%;">
+          </div>
+          <div class="flex-row mb-8" style="justify-content:space-between;">
+            <span class="text-muted" style="font-size:11px;">Current Policy — Geographic Distribution</span>
+            <span class="text-muted" style="font-size:11px;">Simulated Policy</span>
+          </div>
+          <div class="grid-2" style="gap:8px;">
+            <div id="policyChartBefore" class="chart-area" style="height:140px;padding-bottom:24px;"></div>
+            <div id="policyChartAfter" class="chart-area" style="height:140px;padding-bottom:24px;"></div>
+          </div>
+          <div class="text-muted mt-8" style="font-size:11px;">Digital twin simulation against 5 years of historical OPTN data (2020-2025) | Powered by Layer 1 &amp; Layer 2 ML models</div>
         </div>
-        <div class="grid-2" style="gap:8px;">
-          <div id="policyChartBefore" class="chart-area" style="height:140px;padding-bottom:24px;"></div>
-          <div id="policyChartAfter" class="chart-area" style="height:140px;padding-bottom:24px;"></div>
-        </div>
-        <div class="text-muted mt-8" style="font-size:11px;">Simulated on 12 months historical match data (de-identified)</div>
       </div>
       <div class="card">
         <div class="card-header">
@@ -1815,22 +1877,42 @@ function runMatchSimulation() {
       .slice(0, 15)
       .map((c, i) => ({ ...c, rank: i + 1 }));
 
+    // Generate AI-augmented scores for each candidate
+    candidates.forEach(c => {
+      const legacyVal = typeof c.finalScore === 'number' ? c.finalScore : c.score;
+      const mlDelta = randomInt(2, 8);
+      c.mlScore = typeof legacyVal === 'number' ? Math.min(99, parseFloat((legacyVal + mlDelta).toFixed(1))) : legacyVal;
+      c.mlDelta = '+' + mlDelta;
+      c.tbs = randomFloat(0.5, 7.2, 1);
+      c.tbsUncertainty = randomFloat(0.3, 1.2, 1);
+      c.shapFactors = [
+        { feature: 'HLA mismatch (A,B,DR)', impact: -randomFloat(0.5, 2.0, 1), direction: 'neg' },
+        { feature: 'Age compatibility', impact: randomFloat(0.3, 1.5, 1), direction: 'pos' },
+        { feature: 'KDPI-EPTS match', impact: randomFloat(0.2, 1.8, 1), direction: 'pos' },
+        { feature: 'Est. cold ischemia', impact: -randomFloat(0.1, 0.8, 1), direction: 'neg' },
+        { feature: 'Recipient comorbidities', impact: -randomFloat(0.1, 0.6, 1), direction: 'neg' }
+      ];
+    });
+
     const tbody = document.getElementById('matchTableBody');
     tbody.innerHTML = '';
     candidates.forEach(c => {
-      const compClass = c.compatibility > 80 ? 'high' : c.compatibility > 60 ? 'medium' : 'low';
-      const highlight = isAoos && c.rank === 3 ? ' style="background:#fff3cd;"' : c.rank === 1 ? ' style="background:#e8f5e9;"' : '';
-      tbody.innerHTML += `<tr${highlight}>
+      const tbsClass = c.tbs > 4 ? 'color:#059669;' : c.tbs > 2 ? 'color:#d97706;' : 'color:#6b7280;';
+      const highlight = isAoos && c.rank === 3 ? ' style="background:#fffbeb;cursor:pointer;"' : c.rank === 1 ? ' style="background:#f0fdf4;cursor:pointer;"' : ' style="cursor:pointer;"';
+      const tr = document.createElement('tr');
+      tr.setAttribute('style', (isAoos && c.rank === 3 ? 'background:#fffbeb;' : c.rank === 1 ? 'background:#f0fdf4;' : '') + 'cursor:pointer;');
+      tr.innerHTML = `
         <td><strong>${c.rank}</strong></td>
         <td>${c.firstName} ${c.lastName} <span class="tag">${c.id}</span></td>
         <td>${c.age}</td>
         <td>${c.bloodType}</td>
-        <td><strong>${c.finalScore}</strong> <span class="text-muted">${c.scoreName}</span></td>
-        <td>${c.cpra !== null ? c.cpra + '%' : '—'}</td>
+        <td><span style="color:var(--color-text-secondary);">${c.finalScore}</span> <span class="text-muted" style="font-size:10px;">${c.scoreName}</span></td>
+        <td><strong style="color:#1e40af;">${c.mlScore}</strong> <span style="font-size:10px;color:#2563eb;">${c.mlDelta}</span></td>
+        <td><strong style="${tbsClass}">+${c.tbs}y</strong> <span style="font-size:10px;color:var(--color-text-secondary);">&plusmn;${c.tbsUncertainty}</span></td>
         <td>${Math.floor(c.waitDays / 365)}y ${c.waitDays % 365}d</td>
-        <td>${c.center.id}</td>
-        <td><div class="score-bar-container"><div class="score-bar"><div class="score-bar-fill ${compClass}" style="width:${c.compatibility}%"></div></div><span style="font-size:12px;min-width:32px;">${c.compatibility}%</span></div></td>
-      </tr>`;
+        <td>${c.center.id}</td>`;
+      tr.addEventListener('click', () => showShapExplanation(c));
+      tbody.appendChild(tr);
     });
 
     resultsEl.style.display = 'block';
@@ -1849,7 +1931,9 @@ function runMatchSimulation() {
 <div class="audit-entry"><strong>Policy Version:</strong> ${policyVersion}</div>
 <div class="audit-entry"><strong>Candidates Evaluated:</strong> ${candidates.length}</div>
 <div class="audit-entry"><strong>Execution Time:</strong> ${elapsed}s</div>
-<div class="audit-entry"><strong>Top Candidate:</strong> ${candidates[0].id} — ${candidates[0].firstName} ${candidates[0].lastName} (compatibility: ${candidates[0].compatibility}%)</div>
+<div class="audit-entry"><strong>Top Candidate:</strong> ${candidates[0].id} — ${candidates[0].firstName} ${candidates[0].lastName} (TBS: +${candidates[0].tbs}y)</div>
+<div class="audit-entry"><strong>Layer 1 Model:</strong> optn-${organType.toLowerCase()}-severity-v2.1 (XGBoost, AUC 0.84)</div>
+<div class="audit-entry"><strong>Layer 2 Model:</strong> optn-${organType.toLowerCase()}-tbs-v1.3 (representation learning, validated Q1 2026)</div>
 ${isAoos ? '<div class="audit-entry" style="color:#d54309;"><strong>AOOS FLAG:</strong> Allocation to rank #3 — justification pending</div>' : ''}
 <div class="audit-entry"><strong>Hash:</strong> sha256:${Array.from({length:64},()=>'0123456789abcdef'[Math.floor(Math.random()*16)]).join('')}</div>
 <div class="audit-entry"><strong>QLDB Document ID:</strong> ${Array.from({length:22},()=>'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'[Math.floor(Math.random()*62)]).join('')}</div>
@@ -1860,18 +1944,39 @@ ${isAoos ? '<div class="audit-entry" style="color:#d54309;"><strong>AOOS FLAG:</
   }, 1800);
 }
 
+function showShapExplanation(c) {
+  const panel = document.getElementById('shapPanel');
+  panel.style.display = 'block';
+  document.getElementById('shapTitle').textContent = `SHAP Explanation — ${c.firstName} ${c.lastName} (${c.id}) — TBS: +${c.tbs} years`;
+  const bars = document.getElementById('shapBars');
+  const maxImpact = Math.max(...c.shapFactors.map(f => Math.abs(f.impact)));
+  bars.innerHTML = c.shapFactors.map(f => {
+    const pct = (Math.abs(f.impact) / maxImpact) * 100;
+    const color = f.direction === 'pos' ? '#22c55e' : '#ef4444';
+    const sign = f.direction === 'pos' ? '+' : '';
+    return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;">
+      <span style="min-width:160px;font-size:12px;color:var(--color-text-secondary);text-align:right;">${f.feature}</span>
+      <div style="flex:1;display:flex;align-items:center;gap:6px;">
+        <div style="height:14px;width:${pct}%;background:${color};border-radius:3px;opacity:0.8;min-width:4px;"></div>
+        <span style="font-size:12px;font-weight:600;color:${color};white-space:nowrap;">${sign}${f.impact}y</span>
+      </div>
+    </div>`;
+  }).join('');
+  panel.scrollIntoView({ behavior: 'smooth' });
+}
+
 initMatching();
 
 // ========== ORGAN OFFERS ==========
 const OFFER_CASCADE_DATA = [
-  { rank: 1, center: CENTERS[1], status: 'pending', time: null, reason: null },
-  { rank: 2, center: CENTERS[0], status: 'waiting', time: null, reason: null },
-  { rank: 3, center: CENTERS[2], status: 'waiting', time: null, reason: null },
-  { rank: 4, center: CENTERS[3], status: 'waiting', time: null, reason: null },
-  { rank: 5, center: CENTERS[4], status: 'waiting', time: null, reason: null },
-  { rank: 6, center: { id: 'NWTC', name: 'Northwest Transplant Center', city: 'Seattle, WA' }, status: 'waiting', time: null, reason: null },
-  { rank: 7, center: { id: 'RMTC', name: 'Rocky Mountain Transplant', city: 'Denver, CO' }, status: 'waiting', time: null, reason: null },
-  { rank: 8, center: { id: 'GLTC', name: 'Great Lakes Medical Center', city: 'Detroit, MI' }, status: 'waiting', time: null, reason: null }
+  { rank: 1, center: CENTERS[1], status: 'pending', time: null, reason: null, acceptProb: 73 },
+  { rank: 2, center: CENTERS[0], status: 'waiting', time: null, reason: null, acceptProb: 45 },
+  { rank: 3, center: CENTERS[2], status: 'waiting', time: null, reason: null, acceptProb: 38 },
+  { rank: 4, center: CENTERS[3], status: 'waiting', time: null, reason: null, acceptProb: 62 },
+  { rank: 5, center: CENTERS[4], status: 'waiting', time: null, reason: null, acceptProb: 28 },
+  { rank: 6, center: { id: 'NWTC', name: 'Northwest Transplant Center', city: 'Seattle, WA' }, status: 'waiting', time: null, reason: null, acceptProb: 71 },
+  { rank: 7, center: { id: 'RMTC', name: 'Rocky Mountain Transplant', city: 'Denver, CO' }, status: 'waiting', time: null, reason: null, acceptProb: 19 },
+  { rank: 8, center: { id: 'GLTC', name: 'Great Lakes Medical Center', city: 'Detroit, MI' }, status: 'waiting', time: null, reason: null, acceptProb: 54 }
 ];
 
 let offerTimerSeconds = 3599;
@@ -1898,6 +2003,14 @@ function initOffers() {
 function renderOfferCascade() {
   const el = document.getElementById('offerCascade');
   el.innerHTML = '';
+  // Smart offers alert — check if top 3 have low acceptance
+  const topLow = OFFER_CASCADE_DATA.slice(0, 3).filter(o => o.acceptProb < 50 && o.status === 'waiting').length;
+  if (topLow >= 2) {
+    el.innerHTML += `<div style="background:#fffbeb;border:1px solid #fde68a;border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:10px;font-size:12px;">
+      <strong style="color:#92400e;">Smart Offers Activated</strong> — Model predicts high decline probability for ranks #2-#3 (<50%). Parallel offers initiated to ranks #4, #6 to reduce cold ischemia time.
+      <span style="font-size:10px;color:var(--color-text-secondary);display:block;margin-top:4px;">Trained on 2.1M historical offer decisions (OPTN match run archives)</span>
+    </div>`;
+  }
   OFFER_CASCADE_DATA.forEach(o => {
     let statusBadge = '', rowClass = '';
     if (o.status === 'accepted') { statusBadge = '<span class="badge badge-active">ACCEPTED</span>'; rowClass = 'accepted'; }
@@ -1906,12 +2019,14 @@ function renderOfferCascade() {
     else if (o.status === 'timed-out') { statusBadge = '<span class="badge badge-inactive">TIMED OUT</span>'; rowClass = 'timed-out'; }
     else { statusBadge = '<span class="text-muted">Waiting</span>'; rowClass = ''; }
 
+    const probColor = o.acceptProb > 60 ? '#059669' : o.acceptProb > 35 ? '#d97706' : '#dc2626';
     el.innerHTML += `<div class="offer-row ${rowClass}">
       <div class="offer-rank">${o.rank}</div>
       <div style="flex:1;">
         <div style="font-weight:600;">${o.center.name}</div>
         <div class="text-muted" style="font-size:11px;">${o.center.city} — ${o.center.id}</div>
       </div>
+      <div style="min-width:55px;text-align:center;"><span style="font-size:12px;font-weight:700;color:${probColor};">${o.acceptProb}%</span><br><span style="font-size:9px;color:var(--color-text-secondary);">accept</span></div>
       <div>${statusBadge}</div>
       <div class="text-muted" style="font-size:11px;min-width:60px;text-align:right;">${o.time || ''}</div>
     </div>`;
@@ -2181,6 +2296,13 @@ function renderTransportTable() {
 initTransport();
 
 // ========== ANALYTICS & AI ==========
+const POLICY_SCENARIOS = {
+  'ml-meld': { name: 'Replace MELD with ML-Enhanced Score', transplants: '+3.2%', mortality: '-418/yr', graft: '+2.1%', utilization: '+5.8%', note: 'Based on OPOM research (Bertsimas et al., 2019) — ML classification trees reduced simulated annual waitlist mortality by ~418 deaths vs MELD.' },
+  'distance': { name: 'Expand kidney distance 250nm → 500nm', transplants: '+1.1%', mortality: '-85/yr', graft: '+0.4%', utilization: '+2.3%', note: 'Broader geographic sharing increases donor pool access but raises cold ischemia times for distant centers.' },
+  'longevity': { name: 'Longevity matching for KDPI <20%', transplants: '0%', mortality: '+12/yr', graft: '+4.8%', utilization: '0%', note: 'Directs highest-quality kidneys to candidates with longest expected post-transplant survival (EPTS <20%).' },
+  'proximity': { name: 'Adjust geographic proximity weight', transplants: 'varies', mortality: 'varies', graft: 'varies', utilization: 'varies', note: 'Use the slider below to adjust weight and see projected geographic distribution shift.' }
+};
+
 function initAnalytics() {
   // Acceptance prediction
   document.getElementById('runPredictionBtn').addEventListener('click', () => {
@@ -2201,25 +2323,35 @@ function initAnalytics() {
     document.getElementById('predictionResult').style.display = 'block';
   });
 
-  // Wait time estimation
-  document.getElementById('runWaitEstBtn').addEventListener('click', () => {
-    const organ = document.getElementById('waitEstOrgan').value;
-    const blood = document.getElementById('waitEstBlood').value;
-    const baseMonths = { Kidney: 42, Liver: 11, Heart: 8, Lung: 6 };
-    const bloodMult = blood.startsWith('O') ? 1.4 : blood.startsWith('B') ? 1.2 : blood.startsWith('AB') ? 0.7 : 1.0;
-    const months = Math.round(baseMonths[organ] * bloodMult * randomFloat(0.8, 1.2, 2));
-    const lo = Math.max(1, months - randomInt(3, 8));
-    const hi = months + randomInt(3, 12);
-    document.getElementById('waitEstValue').textContent = months + ' months';
-    document.getElementById('waitEstRange').textContent = `80% confidence interval: ${lo}–${hi} months`;
-    document.getElementById('waitEstResult').style.display = 'block';
-  });
-
-  // Policy simulation
+  // Layer 3 Policy Simulator
   const beforeData = [42, 28, 18, 8, 4];
   const labels = ['Local', '250nm', '500nm', 'Region', 'National'];
-  renderPolicyChart('policyChartBefore', beforeData, labels, '#1a4480');
-  renderPolicyChart('policyChartAfter', beforeData, labels, '#2e6db4');
+
+  document.getElementById('runSimBtn').addEventListener('click', () => {
+    const scenario = document.getElementById('policyScenario').value;
+    const s = POLICY_SCENARIOS[scenario];
+    const metrics = document.getElementById('simMetrics');
+    const isPositive = v => v.startsWith('+') || v.startsWith('-');
+    metrics.innerHTML = [
+      { label: 'Transplant Volume', value: s.transplants, color: s.transplants.startsWith('+') ? '#059669' : '#6b7280' },
+      { label: 'Waitlist Mortality', value: s.mortality, color: s.mortality.startsWith('-') ? '#059669' : '#dc2626' },
+      { label: 'Graft Survival', value: s.graft, color: s.graft.startsWith('+') ? '#059669' : '#6b7280' },
+      { label: 'Organ Utilization', value: s.utilization, color: s.utilization.startsWith('+') ? '#059669' : '#6b7280' }
+    ].map(m => `<div style="background:var(--color-surface-alt);border:1px solid var(--color-border);border-radius:var(--radius-sm);padding:10px;text-align:center;">
+      <div style="font-size:10px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:0.5px;">${m.label}</div>
+      <div style="font-size:20px;font-weight:800;color:${m.color};margin:2px 0;">${m.value}</div>
+    </div>`).join('');
+
+    // Show/hide slider for proximity scenario
+    document.getElementById('simSliderArea').style.display = scenario === 'proximity' ? 'block' : 'none';
+
+    renderPolicyChart('policyChartBefore', beforeData, labels, '#1e40af');
+    const afterData = scenario === 'ml-meld' ? [38, 30, 20, 8, 4] :
+                      scenario === 'distance' ? [30, 22, 26, 14, 8] :
+                      scenario === 'longevity' ? [44, 26, 18, 8, 4] : beforeData;
+    renderPolicyChart('policyChartAfter', afterData, labels, '#2563eb');
+    document.getElementById('simResults').style.display = 'block';
+  });
 
   document.getElementById('policySlider').addEventListener('input', (e) => {
     const val = parseInt(e.target.value);
@@ -2229,7 +2361,7 @@ function initAnalytics() {
       if (i < 2) return Math.round(v * factor);
       return Math.round(v * (2 - factor));
     });
-    renderPolicyChart('policyChartAfter', after, labels, '#2e6db4');
+    renderPolicyChart('policyChartAfter', after, labels, '#2563eb');
   });
 }
 
@@ -2415,8 +2547,8 @@ const DEMO_STEPS = [
   },
   {
     tab: 'matching',
-    title: 'Running a Match',
-    desc: 'Watch as the engine evaluates active candidates, computes scores (MELD, KDPI, EPTS, CAS, CPRA), and produces a rank-ordered list. Match runs complete in under 60 seconds. Every run generates an immutable audit record in Amazon QLDB.',
+    title: 'Three-Layer AI-Augmented Match',
+    desc: 'The match results show three layers: the deterministic policy rank, Layer 1 ML-Enhanced Scores (using 48+ variables vs. 3-4 in traditional MELD/KDPI), and Layer 2 Transplant Benefit Scores predicting pair-level survival benefit. Click any row to see SHAP explanations.',
     highlight: '#runMatchBtn',
     action: () => {
       document.getElementById('matchDonorSelect').value = 'DNR-001';
@@ -2446,8 +2578,8 @@ const DEMO_STEPS = [
   },
   {
     tab: 'offers',
-    title: 'Offer Cascade & AI Prediction',
-    desc: 'The offer cascade shows every center contacted, their response, and timing. An AI acceptance prediction (powered by Amazon Bedrock/SageMaker) estimates the probability each center will accept, helping OPOs optimize placement strategy.',
+    title: 'Smart Offers & Acceptance Prediction',
+    desc: 'Each center in the cascade shows an AI-predicted acceptance probability. When top-ranked centers have low predicted acceptance (<50%), Smart Offers activates — initiating parallel offers to lower-ranked but likely-to-accept centers, reducing cold ischemia time and organ waste.',
     highlight: '#offerCascade'
   },
   {
@@ -2495,20 +2627,19 @@ const DEMO_STEPS = [
   },
   {
     tab: 'analytics',
-    title: 'AI-Powered Analytics',
-    desc: 'Amazon Bedrock and SageMaker power advisory AI features. The acceptance prediction model estimates how likely each center is to accept an offer based on historical patterns. All AI features are human-in-the-loop — advisory only.',
+    title: 'AI Analytics & Model Governance',
+    desc: 'The Analytics tab shows the Layer 3 Digital Twin policy simulator and a model governance dashboard tracking every deployed AI model through the 7-step validation pipeline: Technical, Simulation, Clinical, Bias Audit, Shadow Deployment, Public Comment, and Board Approval.',
     highlight: '#predictionResult',
     action: () => document.getElementById('runPredictionBtn').click()
   },
   {
     tab: 'analytics',
-    title: 'Policy Simulation Sandbox',
-    desc: 'Policy analysts can simulate allocation policy changes before deployment. Adjust the geographic proximity weight slider to see how it would shift organ distribution between local and national allocation — all computed against 12 months of historical data.',
-    highlight: '#policySlider',
+    title: 'Layer 3: Digital Twin Simulator',
+    desc: 'The policy simulator runs proposed changes against 5+ years of historical OPTN data using the Layer 1 and Layer 2 ML models. The OPOM scenario shows ~418 fewer waitlist deaths per year — matching the peer-reviewed research findings.',
+    highlight: '#simResults',
     action: () => {
-      const slider = document.getElementById('policySlider');
-      slider.value = 75;
-      slider.dispatchEvent(new Event('input'));
+      document.getElementById('policyScenario').value = 'ml-meld';
+      document.getElementById('runSimBtn').click();
     }
   },
   {
